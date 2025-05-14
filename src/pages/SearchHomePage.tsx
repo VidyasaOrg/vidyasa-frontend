@@ -1,13 +1,45 @@
+import ParameterSettings from "@/components/ParameterSettings";
 import SearchBar from "@/components/SearchBar";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import ContentLayout from "@/layouts/ContentLayout";
+import { useState } from "react";
 
 function SearchHomePage() {
+    const [isInteractive, setIsInteractive] = useState(true);
+
     return (
-        <div className="min-h-screen flex items-center justify-center px-4">
-            <div className="max-w-xl w-full space-y-4">
-                <h1 className="text-3xl font-bold text-center">IR Search</h1>
-                <SearchBar autoFocus redirectToSearch />
+        <ContentLayout>
+            <div className="min-h-screen flex flex-col gap-8 pt-24">
+                <h1 className="text-5xl font-bold text-center">Mesin Pencari</h1>
+                <div className="flex flex-col gap-6">
+                    <h2 className="text-xl font-bold">Input Query</h2>
+                    <RadioGroup className="flex gap-4" defaultValue="interactive">
+                        <div className="flex items-center gap-2">
+                            <RadioGroupItem className="hover:cursor-pointer" value="interactive" id="interactive" onClick={() => setIsInteractive(true)} />
+                            <Label htmlFor="interactive">Interactive</Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <RadioGroupItem className="hover:cursor-pointer" value="batch" id="batch" onClick={() => setIsInteractive(false)} />
+                            <Label htmlFor="batch">Batch</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                {
+                    isInteractive ?
+                        <SearchBar autoFocus /> 
+                        :
+                        <div className="flex items-center justify-center">
+                            <p className="text-gray-500">Fitur masih dalam pengembangan 🚧</p>
+                        </div>
+                }
+                <div className="flex flex-col gap-8 mt-4">
+                    <h2 className="text-xl font-bold">Pengaturan Lanjut</h2>
+                    <ParameterSettings />
+                </div>
             </div>
-        </div>
+
+        </ContentLayout>
     );
 }
 

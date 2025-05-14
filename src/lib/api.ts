@@ -1,9 +1,9 @@
 export async function retrieveDocuments(query: string) {
-  await new Promise((res) => setTimeout(res, 500)); // simulate latency
+  await new Promise((res) => setTimeout(res, Math.random() * 1000 + 250));
   const mockResults = Array.from({ length: Math.floor(Math.random() * 10) + 5 }, (_, i) => ({
     id: i,
-    title: `Result for "${query}" #${i + 1}`,
-    snippet: `This is a snippet for result ${i + 1}, containing "${query}".`,
+    title: `Dokumen "${query}" #${i + 1}`,
+    snippet: `Dokumen relevan ${i + 1} yang mengandung "${query}".`,
   }));
   return mockResults;
 }

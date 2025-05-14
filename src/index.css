@@ -118,3 +118,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 300ms;
+    animation-timing-function: ease-in-out;
+}

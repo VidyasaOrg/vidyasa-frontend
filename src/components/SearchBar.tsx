@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useLocation, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { z } from 'zod';
+import { SearchIcon } from 'lucide-react';
 
-const querySchema = z.string().min(1, "Query is required");
+const querySchema = z.string().min(1);
 
 interface SearchBarProps {
     autoFocus?: boolean;
-    redirectToSearch?: boolean;
 }
 
-function SearchBar({ autoFocus = false, redirectToSearch = false }: SearchBarProps) {
+function SearchBar({ autoFocus = false }: SearchBarProps) {
     const navigate = useNavigate();
-    const location = useLocation();
     const [searchParams] = useSearchParams();
     const initialQuery = searchParams.get('query') || '';
     const [query, setQuery] = useState(initialQuery);
@@ -29,12 +28,7 @@ function SearchBar({ autoFocus = false, redirectToSearch = false }: SearchBarPro
         }
 
         const encoded = encodeURIComponent(query.trim());
-
-        if (redirectToSearch || location.pathname === '/') {
-            navigate(`/search?query=${encoded}`);
-        } else {
-            navigate(`?query=${encoded}`);
-        }
+        navigate(`/search?query=${encoded}`);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -42,7 +36,7 @@ function SearchBar({ autoFocus = false, redirectToSearch = false }: SearchBarPro
     };
 
     return (
-        <div className="flex gap-2">
+        <div className="flex gap-8 w-full">
             <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -50,7 +44,9 @@ function SearchBar({ autoFocus = false, redirectToSearch = false }: SearchBarPro
                 placeholder="Cari apa hari ini?"
                 autoFocus={autoFocus}
             />
-            <Button onClick={handleSearch}>Search</Button>
+            <Button onClick={handleSearch} className="flex items-center gap-4 cursor-pointer" disabled={!querySchema.safeParse(query.trim()).success}>
+                Cari <SearchIcon />
+            </Button>
         </div>
     );
 }
