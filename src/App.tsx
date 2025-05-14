@@ -1,7 +1,14 @@
+import { Route, Routes } from "react-router";
+import SearchHomePage from "./pages/SearchHomePage";
+import SearchResultPage from "./pages/SearchResultPage";
+
 function App() {
-	return <>
-		<h1 className="font-bold text-6xl"> Search Engine </h1>
-	</>;
+	return (
+		<Routes>
+			<Route path="/" element={<SearchHomePage />} />
+			<Route path="/search" element={<SearchResultPage />} />
+		</Routes>
+	);
 }
 
 export default App;
