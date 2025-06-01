@@ -3,66 +3,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ContentLayout from "@/layouts/ContentLayout";
 import { SearchIcon } from "lucide-react";
-
-// Add keyframes and animation style at the top
-const flickerAnimation = `@keyframes flicker {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
-}`;
-
-interface TermLocations {
-    [term: string]: number[];
-}
-
-interface SearchState {
-    status: 'idle' | 'loading' | 'success' | 'error';
-    data: TermLocations | null;
-    error: string | null;
-}
+import { docIdSearch } from "@/lib/api";
+import type { SearchState, TermLocations } from "@/types/search";
 
 function InverseDocIdPage() {
     const [docId, setDocId] = useState("");
-    const [searchState, setSearchState] = useState<SearchState>({
+    const [searchState, setSearchState] = useState<SearchState<TermLocations>>({
         status: 'idle',
         data: null,
         error: null
     });
 
-    const simulateApiCall = async (docId: string): Promise<{ status: number; data?: TermLocations }> => {
-        const delay = Math.random() * 5000 + 500;
-        await new Promise(resolve => setTimeout(resolve, delay));
-
-        if (Math.random() < 0.1) {
-            return { status: 500 };
+    const handleInputChange = (value: string) => {
+        // Only allow positive integers
+        if (value === "" || /^[1-9][0-9]*$/.test(value)) {
+            setDocId(value);
         }
-
-        if (Math.random() < 0.3) {
-            return { status: 404 };
-        }
-
-        // Generate random terms and their positions
-        const terms = ["hello", "world", "example", "document", "text", "content"];
-        const result: TermLocations = {};
-        const numTerms = Math.floor(Math.random() * 4) + 2; // 2-5 terms
-        
-        for (let i = 0; i < numTerms; i++) {
-            const term = terms[Math.floor(Math.random() * terms.length)];
-            const numPositions = Math.floor(Math.random() * 5) + 1; // 1-5 positions
-            const positions = Array.from({ length: numPositions }, 
-                () => Math.floor(Math.random() * 100) + 1)
-                .sort((a, b) => a - b);
-            result[term] = positions;
-        }
-
-        return { status: 200, data: result };
     };
 
     const handleSearch = async () => {
         setSearchState({ status: 'loading', data: null, error: null });
 
         try {
-            const response = await simulateApiCall(docId);
+            const response = await docIdSearch(docId);
 
             switch (response.status) {
                 case 200:
@@ -99,13 +62,6 @@ function InverseDocIdPage() {
                 data: null,
                 error: "Terjadi kesalahan saat memproses permintaan"
             });
-        }
-    };
-
-    const handleInputChange = (value: string) => {
-        // Only allow positive integers
-        if (value === "" || /^[1-9][0-9]*$/.test(value)) {
-            setDocId(value);
         }
     };
 
@@ -150,9 +106,8 @@ function InverseDocIdPage() {
                 </div>
 
                 <div className="flex justify-center min-h-[60px]">
-                    <style>{flickerAnimation}</style>
                     {searchState.status === 'loading' && (
-                        <div className="text-lg text-muted-foreground text-center" style={{ animation: 'flicker 2s ease-in-out infinite' }}>
+                        <div className="text-lg text-muted-foreground text-center">
                             Mengindeks term dalam dokumen...
                         </div>
                     )}
