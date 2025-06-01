@@ -13,10 +13,10 @@ export type AdditionalTerms = number | 'all';
 
 export interface SingleQueryRequest {
     query: string;
-    stemming: boolean;
-    "additional-term": AdditionalTerms;
-    "eliminate-stop-word": boolean;
-    tf: TFMethod;
+    is_stemming: boolean;
+    expansion_terms_count: AdditionalTerms;
+    is_stop_words_removal: boolean;
+    term_frequency_method: TFMethod;
     idf: boolean;
     normalization: boolean;
 }

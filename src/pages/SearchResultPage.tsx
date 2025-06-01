@@ -5,12 +5,14 @@ import SearchConfig from '@/components/SearchConfig';
 import QueryWeights from '@/components/QueryWeights';
 import RankedDocuments from '@/components/RankedDocuments';
 import type { SingleQueryRequest, SingleQueryResponse } from '@/types/search';
+import { useSearch } from '@/contexts/SearchContext';
 
 function SearchResultsPage() {
     const [params] = useSearchParams();
     const query = params.get('query') ?? '';
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<SingleQueryResponse | null>(null);
+    const { searchConfig } = useSearch();
 
     const handleSearch = async (config: SingleQueryRequest) => {
         setLoading(true);
@@ -50,18 +52,23 @@ function SearchResultsPage() {
         }
     };
 
+    // Only perform initial search when the page loads
     useEffect(() => {
         if (!query) return;
-        handleSearch({
+        
+        // Use the stored config if available, otherwise use defaults
+        const initialConfig: SingleQueryRequest = searchConfig || {
             query,
-            stemming: true,
-            "additional-term": "all",
-            "eliminate-stop-word": true,
-            tf: "raw",
+            is_stemming: true,
+            expansion_terms_count: "all",
+            is_stop_words_removal: true,
+            term_frequency_method: "raw",
             idf: true,
             normalization: true
-        });
-    }, [query]);
+        };
+        
+        handleSearch(initialConfig);
+    }, [query]); // Only depend on query, not searchConfig
 
     if (!query) return <Navigate to="/" />;
 
@@ -75,6 +82,7 @@ function SearchResultsPage() {
                 <div className="w-full space-y-8">
                     <SearchConfig 
                         defaultQuery={query}
+                        defaultConfig={searchConfig || undefined}
                         onSearch={handleSearch}
                     />
 

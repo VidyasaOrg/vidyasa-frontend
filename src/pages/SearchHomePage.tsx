@@ -6,14 +6,15 @@ import ContentLayout from "@/layouts/ContentLayout";
 import SearchConfig from "@/components/SearchConfig";
 import BatchUpload from "@/components/BatchUpload";
 import type { SingleQueryRequest } from "@/types/search";
+import { useSearch } from "@/contexts/SearchContext";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
     const navigate = useNavigate();
+    const { searchConfig, setSearchConfig } = useSearch();
 
     const handleSearch = (config: SingleQueryRequest) => {
-        // For now, just navigate with the query
-        // Later we can store the full config in state/context if needed
+        setSearchConfig(config);
         navigate(`/search?query=${encodeURIComponent(config.query)}`);
     };
 
@@ -47,7 +48,10 @@ function SearchHomePage() {
                 
                 <div className="w-full">
                     {isInteractive ? (
-                        <SearchConfig onSearch={handleSearch} />
+                        <SearchConfig 
+                            onSearch={handleSearch}
+                            defaultConfig={searchConfig || undefined}
+                        />
                     ) : (
                         <BatchUpload />
                     )}
