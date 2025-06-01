@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ContentLayout from "@/layouts/ContentLayout";
 import { useState } from "react";
+import BatchUpload from "@/components/BatchUpload";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
@@ -25,20 +26,12 @@ function SearchHomePage() {
                         </div>
                     </RadioGroup>
                 </div>
-                {
-                    isInteractive ?
-                        <SearchBar autoFocus /> 
-                        :
-                        <div className="flex items-center justify-center">
-                            <p className="text-gray-500">Fitur masih dalam pengembangan 🚧</p>
-                        </div>
-                }
+                {isInteractive ? <SearchBar autoFocus /> : <BatchUpload />}
                 <div className="flex flex-col gap-8 mt-4">
                     <h2 className="text-xl font-bold">Pengaturan Lanjut</h2>
                     <ParameterSettings />
                 </div>
             </div>
-
         </ContentLayout>
     );
 }

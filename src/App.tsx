@@ -1,13 +1,21 @@
 import { Route, Routes } from "react-router";
 import SearchHomePage from "./pages/SearchHomePage";
 import SearchResultPage from "./pages/SearchResultPage";
+import InverseDocTermPage from "./pages/InverseDocTermPage";
+import InverseDocIdPage from "./pages/InverseDocIdPage";
+import NavBar from "./components/NavBar";
 
 function App() {
 	return (
-		<Routes>
-			<Route path="/" element={<SearchHomePage />} />
-			<Route path="/search" element={<SearchResultPage />} />
-		</Routes>
+		<>
+			<NavBar />
+			<Routes>
+				<Route path="/" element={<SearchHomePage />} />
+				<Route path="/search" element={<SearchResultPage />} />
+				<Route path="/inverse-doc-term" element={<InverseDocTermPage />} />
+				<Route path="/inverse-doc-id" element={<InverseDocIdPage />} />
+			</Routes>
+		</>
 	);
 }
 

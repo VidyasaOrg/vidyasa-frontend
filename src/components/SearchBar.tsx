@@ -36,7 +36,7 @@ function SearchBar({ autoFocus = false }: SearchBarProps) {
     };
 
     return (
-        <div className="flex gap-8 w-full">
+        <div className="flex gap-4 w-full">
             <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -44,7 +44,7 @@ function SearchBar({ autoFocus = false }: SearchBarProps) {
                 placeholder="Cari apa hari ini?"
                 autoFocus={autoFocus}
             />
-            <Button onClick={handleSearch} className="flex items-center gap-4 cursor-pointer" disabled={!querySchema.safeParse(query.trim()).success}>
+            <Button onClick={handleSearch} className="flex items-center gap-2 cursor-pointer" disabled={!querySchema.safeParse(query.trim()).success}>
                 Cari <SearchIcon />
             </Button>
         </div>
