@@ -4,6 +4,7 @@ import ContentLayout from '@/layouts/ContentLayout';
 import { Button } from '@/components/ui/button';
 import { DownloadIcon, AlertCircle } from 'lucide-react';
 import { useBatch } from '@/contexts/BatchContext';
+import { batchSearch } from '@/lib/api';
 
 export default function BatchResultPage() {
     const navigate = useNavigate();
@@ -23,32 +24,31 @@ export default function BatchResultPage() {
 
         const processRequest = async () => {
             try {
-                // Simulate API call
-                await new Promise(res => setTimeout(res, 2000));
-
-                // Randomly simulate different scenarios
-                const random = Math.random();
+                const result = await batchSearch(request);
                 
-                if (random < 0.2) {
-                    // 20% chance of 400 error
-                    setError({ 
-                        status: 400, 
-                        message: "Bad Request" 
-                    });
-                } else if (random < 0.3) {
-                    // 10% chance of 500 error
-                    setError({ 
-                        status: 500, 
-                        message: "Server Error" 
-                    });
-                } else {
-                    // 70% chance of success - return the same file back
-                    setResponse({ 
-                        result: request.query 
-                    });
+                switch (result.status) {
+                    case 200:
+                        setResponse(result.data!);
+                        break;
+                    case 400:
+                        setError({ 
+                            status: 400, 
+                            message: "Bad Request" 
+                        });
+                        break;
+                    case 500:
+                        setError({ 
+                            status: 500, 
+                            message: "Server Error" 
+                        });
+                        break;
+                    default:
+                        setError({ 
+                            status: 500, 
+                            message: "Unexpected error" 
+                        });
                 }
             } catch (error) {
-                // Handle unexpected errors
                 setError({ 
                     status: 500, 
                     message: "Unexpected error" 

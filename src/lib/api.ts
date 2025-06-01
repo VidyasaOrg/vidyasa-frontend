@@ -1,4 +1,4 @@
-import type { TermLocations } from "@/types/search";
+import type { TermLocations, SingleQueryRequest, SingleQueryResponse, MultiQueryRequest, MultiQueryResponse } from "@/types/search";
 
 export const termSearch = async (term: string): Promise<{ status: number; data?: number[] }> => {
     const delay = Math.random() * 5000 + 500;
@@ -48,12 +48,61 @@ export const docIdSearch = async (docId: string): Promise<{ status: number; data
     return { status: 200, data: result };
 };
 
-export async function retrieveDocuments(query: string) {
-  await new Promise((res) => setTimeout(res, Math.random() * 1000 + 250));
-  const mockResults = Array.from({ length: Math.floor(Math.random() * 10) + 5 }, (_, i) => ({
-    id: i,
-    title: `Dokumen "${query}" #${i + 1}`,
-    snippet: `Dokumen relevan ${i + 1} yang mengandung "${query}".`,
-  }));
-  return mockResults;
-}
+export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQueryResponse> => {
+    // Simulated API call
+    await new Promise(res => setTimeout(res, Math.random() * 2000 + 1000));
+    
+    return {
+        original_ranking: [
+            { doc_id: 1, similarity_score: 0.85 },
+            { doc_id: 2, similarity_score: 0.75 },
+            { doc_id: 3, similarity_score: 0.65 }
+        ],
+        expanded_ranking: [
+            { doc_id: 1, similarity_score: 0.90 },
+            { doc_id: 2, similarity_score: 0.80 },
+            { doc_id: 3, similarity_score: 0.70 }
+        ],
+        original_query: request.query,
+        original_map_score: 0.78,
+        original_query_weights: {
+            "information": 0.5,
+            "retrieval": 0.5
+        },
+        expanded_query: request.query + " systems",
+        expanded_map_score: 0.82,
+        expanded_query_weights: {
+            "information": 0.4,
+            "retrieval": 0.4,
+            "systems": 0.2
+        }
+    };
+};
+
+export const batchSearch = async (request: MultiQueryRequest): Promise<{ status: number; data?: MultiQueryResponse }> => {
+    // Simulate API call
+    await new Promise(res => setTimeout(res, 2000));
+
+    // Randomly simulate different scenarios
+    const random = Math.random();
+    
+    if (random < 0.2) {
+        // 20% chance of 400 error
+        return { 
+            status: 400
+        };
+    } else if (random < 0.3) {
+        // 10% chance of 500 error
+        return { 
+            status: 500
+        };
+    } else {
+        // 70% chance of success - return the same file back
+        return { 
+            status: 200,
+            data: { 
+                result: request.query 
+            }
+        };
+    }
+};
