@@ -19,11 +19,35 @@ function App() {
 				<NavBar />
 				<AnimatePresence mode="wait">
 					<Routes location={location} key={location.pathname}>
-						<Route path="/" element={<PageTransition><SearchHomePage /></PageTransition>} />
-						<Route path="/search" element={<PageTransition><SearchResultPage /></PageTransition>} />
-						<Route path="/batch-result" element={<PageTransition><BatchResultPage /></PageTransition>} />
-						<Route path="/inverse-doc-term" element={<PageTransition><InverseDocTermPage /></PageTransition>} />
-						<Route path="/inverse-doc-id" element={<PageTransition><InverseDocIdPage /></PageTransition>} />
+						<Route path="/" element={
+							<PageTransition>
+								<SearchHomePage />
+							</PageTransition>} 
+						/>
+
+						<Route path="/search" element={
+							<PageTransition>
+								<SearchResultPage />
+							</PageTransition>
+						} />
+
+						<Route path="/batch-result" element={
+							<PageTransition>
+								<BatchResultPage />
+							</PageTransition>
+						} />
+						
+						<Route path="/inverse-doc-term" element={
+							<PageTransition>
+								<InverseDocTermPage />
+							</PageTransition>
+						} />
+
+						<Route path="/inverse-doc-id" element={
+							<PageTransition>
+								<InverseDocIdPage />
+							</PageTransition>
+						} />
 					</Routes>
 				</AnimatePresence>
 			</BatchProvider>

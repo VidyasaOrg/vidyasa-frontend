@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -9,75 +8,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import type { SingleQueryRequest, TFMethod, QueryConfig } from '@/types/search';
-import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from 'lucide-react';
-import { z } from 'zod';
-import { useSearch } from '@/contexts/SearchContext';
+import type { TFMethod, QueryConfig } from '@/types/search';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { useState } from 'react';
 
-const querySchema = z.string().min(1);
-
-interface SearchConfigProps {
-    onSearch: (request: SingleQueryRequest) => void;
-    defaultQuery?: string;
-    defaultConfig?: QueryConfig;
+interface Props {
+    config: QueryConfig;
+    onConfigChange: (config: QueryConfig) => void;
 }
 
-export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfig }: SearchConfigProps) {
-    const { setSearchConfig } = useSearch();
-    const [query, setQuery] = useState(defaultQuery);
-    const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
-        is_stemming: true,
-        expansion_terms_count: 3,
-        is_stop_words_removal: true,
-        term_frequency_method: "raw",
-        idf: true,
-        normalization: true
-    });
-
+export default function SearchConfig({ config, onConfigChange }: Props) {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [customTerms, setCustomTerms] = useState<number>(() => {
-        if (defaultConfig && typeof defaultConfig.expansion_terms_count === "number") {
-            return defaultConfig.expansion_terms_count;
-        }
-        return 3;
+        return typeof config.expansion_terms_count === "number" ? config.expansion_terms_count : 3;
     });
 
-    // Helper function to update both local state and context
-    const updateConfig = (newConfig: QueryConfig) => {
-        setConfig(newConfig);
-        setSearchConfig(newConfig);
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const result = querySchema.safeParse(query.trim());
-        if (!result.success) {
-            return;
-        }
-        const request: SingleQueryRequest = {
-            query: query.trim(),
-            config: config
-        };
-        onSearch(request);
-    };
-
     return (
-        <form onSubmit={handleSubmit} className="w-full space-y-2">
-            <div className="flex gap-2">
-                <Input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Masukkan kata kunci pencarian"
-                    className="flex-1"
-                />
-                <Button 
-                    type="submit" 
-                    disabled={!querySchema.safeParse(query.trim()).success}
-                >
-                    Cari <SearchIcon className="w-4 h-4" />
-                </Button>
-            </div>
-
+        <div className="space-y-2">
             <div className="flex items-center gap-2">
                 <Button
                     type="button"
@@ -98,7 +45,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                 id="stemming"
                                 checked={config.is_stemming}
                                 onCheckedChange={(checked) => 
-                                    updateConfig({ ...config, is_stemming: checked as boolean })}
+                                    onConfigChange({ ...config, is_stemming: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="stemming">Lakukan Stemming</label>
                         </div>
@@ -108,7 +55,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                 id="stopwords"
                                 checked={config.is_stop_words_removal}
                                 onCheckedChange={(checked) => 
-                                    updateConfig({ ...config, is_stop_words_removal: checked as boolean })}
+                                    onConfigChange({ ...config, is_stop_words_removal: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="stopwords">Eliminasi Stop Words</label>
                         </div>
@@ -118,7 +65,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                 id="idf"
                                 checked={config.idf}
                                 onCheckedChange={(checked) => 
-                                    updateConfig({ ...config, idf: checked as boolean })}
+                                    onConfigChange({ ...config, idf: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="idf">Kalkulasi IDF</label>
                         </div>
@@ -128,7 +75,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                 id="normalization"
                                 checked={config.normalization}
                                 onCheckedChange={(checked) => 
-                                    updateConfig({ ...config, normalization: checked as boolean })}
+                                    onConfigChange({ ...config, normalization: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="normalization">Lakukan Normalisasi</label>
                         </div>
@@ -140,7 +87,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                             <Select
                                 value={config.term_frequency_method}
                                 onValueChange={(value: TFMethod) => 
-                                    updateConfig({ ...config, term_frequency_method: value })}
+                                    onConfigChange({ ...config, term_frequency_method: value })}
                             >
                                 <SelectTrigger className='cursor-pointer'>
                                     <SelectValue placeholder="Pilih metode TF" />
@@ -161,9 +108,9 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                     value={config.expansion_terms_count === "all" ? "all" : "custom"}
                                     onValueChange={(value) => {
                                         if (value === "all") {
-                                            updateConfig({ ...config, expansion_terms_count: "all" });
+                                            onConfigChange({ ...config, expansion_terms_count: "all" });
                                         } else {
-                                            updateConfig({ ...config, expansion_terms_count: customTerms });
+                                            onConfigChange({ ...config, expansion_terms_count: customTerms });
                                         }
                                     }}
                                 >
@@ -183,7 +130,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                         onChange={(e) => {
                                             const value = parseInt(e.target.value);
                                             setCustomTerms(value);
-                                            updateConfig({ ...config, expansion_terms_count: value });
+                                            onConfigChange({ ...config, expansion_terms_count: value });
                                         }}
                                         className="w-24"
                                     />
@@ -193,6 +140,6 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                     </div>
                 </div>
             )}
-        </form>
+        </div>
     );
 } 

@@ -1,11 +1,11 @@
 import { useSearchParams, Navigate, Link } from 'react-router';
 import { useEffect, useState } from 'react';
 import ContentLayout from '@/layouts/ContentLayout';
-import SearchConfig from '@/components/SearchConfig';
 import QueryWeights from '@/components/QueryWeights';
 import RankedDocuments from '@/components/RankedDocuments';
 import type { SingleQueryRequest, SingleQueryResponse, QueryConfig } from '@/types/search';
 import { useSearch } from '@/contexts/SearchContext';
+import InteractiveSearch from '@/components/InteractiveSearch';
 
 function SearchResultsPage() {
     const [params] = useSearchParams();
@@ -82,7 +82,7 @@ function SearchResultsPage() {
                 </Link>
 
                 <div className="w-full space-y-8">
-                    <SearchConfig 
+                    <InteractiveSearch 
                         defaultQuery={query}
                         defaultConfig={searchConfig || undefined}
                         onSearch={handleSearch}

@@ -3,11 +3,11 @@ import { useNavigate } from "react-router";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ContentLayout from "@/layouts/ContentLayout";
-import SearchConfig from "@/components/SearchConfig";
 import BatchUpload from "@/components/BatchUpload";
 import type { SingleQueryRequest, MultiQueryRequest } from "@/types/search";
 import { useSearch } from "@/contexts/SearchContext";
 import { useBatch } from "@/contexts/BatchContext";
+import InteractiveSearch from "@/components/InteractiveSearch";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
@@ -55,7 +55,7 @@ function SearchHomePage() {
                 
                 <div className="w-full">
                     {isInteractive ? (
-                        <SearchConfig 
+                        <InteractiveSearch 
                             onSearch={handleSearch}
                             defaultConfig={searchConfig || undefined}
                         />

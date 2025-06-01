@@ -7,12 +7,12 @@ import { useSearch } from '@/contexts/SearchContext';
 import { cn } from "@/lib/utils";
 import SearchConfig from './SearchConfig';
 
-interface BatchUploadProps {
+interface BatchUploadSearchProps {
     onUpload: (request: MultiQueryRequest) => void;
     defaultConfig?: QueryConfig;
 }
 
-export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProps) {
+export default function BatchUploadSearch({ onUpload, defaultConfig }: BatchUploadSearchProps) {
     const { setSearchConfig } = useSearch();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
