@@ -10,7 +10,7 @@ function SearchHomePage() {
 
     return (
         <ContentLayout>
-            <div className="min-h-screen flex flex-col gap-8 pt-24">
+            <div className="min-h-screen flex flex-col gap-8 py-24">
                 <h1 className="text-5xl font-bold text-center">Mesin Pencari</h1>
                 <div className="flex flex-col gap-6">
                     <h2 className="text-xl font-bold">Input Query</h2>
