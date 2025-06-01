@@ -7,22 +7,33 @@ import SearchConfig from "@/components/SearchConfig";
 import BatchUpload from "@/components/BatchUpload";
 import type { SingleQueryRequest, MultiQueryRequest } from "@/types/search";
 import { useSearch } from "@/contexts/SearchContext";
-import { useBatch } from "@/contexts/BatchContext";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
     const navigate = useNavigate();
     const { searchConfig } = useSearch();
-    const { setRequest, setIsProcessing } = useBatch();
 
     const handleSearch = (request: SingleQueryRequest) => {
         navigate(`/search?query=${encodeURIComponent(request.query)}`);
     };
 
-    const handleBatchUpload = (request: MultiQueryRequest) => {
-        setRequest(request);
-        setIsProcessing(true);
-        navigate('/batch-result');
+    const handleBatchUpload = async (request: MultiQueryRequest) => {
+        try {
+            // Here you would normally send the request to your API
+            // For now, we'll just simulate a delay and navigate
+            await new Promise(res => setTimeout(res, 1000));
+            navigate('/batch-result');
+        } catch (error) {
+            // Handle error case
+            navigate('/batch-result', { 
+                state: { 
+                    error: { 
+                        status: 500, 
+                        message: "Server error" 
+                    } 
+                } 
+            });
+        }
     };
 
     return (

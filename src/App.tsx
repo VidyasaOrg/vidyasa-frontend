@@ -6,21 +6,18 @@ import InverseDocTermPage from "./pages/InverseDocTermPage";
 import InverseDocIdPage from "./pages/InverseDocIdPage";
 import NavBar from "./components/NavBar";
 import { SearchProvider } from "./contexts/SearchContext";
-import { BatchProvider } from "./contexts/BatchContext";
 
 function App() {
 	return (
 		<SearchProvider>
-			<BatchProvider>
-				<NavBar />
-				<Routes>
-					<Route path="/" element={<SearchHomePage />} />
-					<Route path="/search" element={<SearchResultPage />} />
-					<Route path="/batch-result" element={<BatchResultPage />} />
-					<Route path="/inverse-doc-term" element={<InverseDocTermPage />} />
-					<Route path="/inverse-doc-id" element={<InverseDocIdPage />} />
-				</Routes>
-			</BatchProvider>
+			<NavBar />
+			<Routes>
+				<Route path="/" element={<SearchHomePage />} />
+				<Route path="/search" element={<SearchResultPage />} />
+				<Route path="/batch-result" element={<BatchResultPage />} />
+				<Route path="/inverse-doc-term" element={<InverseDocTermPage />} />
+				<Route path="/inverse-doc-id" element={<InverseDocIdPage />} />
+			</Routes>
 		</SearchProvider>
 	);
 }
