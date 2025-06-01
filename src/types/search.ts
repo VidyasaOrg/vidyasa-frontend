@@ -11,14 +11,23 @@ export interface TermLocations {
 export type TFMethod = 'raw' | 'log' | 'binary' | 'augmented';
 export type AdditionalTerms = number | 'all';
 
-export interface SingleQueryRequest {
-    query: string;
+export interface QueryConfig {
     is_stemming: boolean;
     expansion_terms_count: AdditionalTerms;
     is_stop_words_removal: boolean;
     term_frequency_method: TFMethod;
     idf: boolean;
     normalization: boolean;
+}
+
+export interface SingleQueryRequest {
+    query: string;
+    config: QueryConfig;
+}
+
+export interface MultiQueryRequest {
+    query: File;
+    config: QueryConfig;
 }
 
 export interface RankedDocument {
@@ -39,4 +48,13 @@ export interface SingleQueryResponse {
     expanded_query: string;
     expanded_map_score: number;
     expanded_query_weights: QueryWeights;
+}
+
+export interface MultiQueryResponse {
+    result: File;
+}
+
+export interface APIError {
+    status: 400 | 500;
+    message: string;
 } 

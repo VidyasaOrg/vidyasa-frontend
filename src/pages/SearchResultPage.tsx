@@ -4,7 +4,7 @@ import ContentLayout from '@/layouts/ContentLayout';
 import SearchConfig from '@/components/SearchConfig';
 import QueryWeights from '@/components/QueryWeights';
 import RankedDocuments from '@/components/RankedDocuments';
-import type { SingleQueryRequest, SingleQueryResponse } from '@/types/search';
+import type { SingleQueryRequest, SingleQueryResponse, QueryConfig } from '@/types/search';
 import { useSearch } from '@/contexts/SearchContext';
 
 function SearchResultsPage() {
@@ -14,7 +14,7 @@ function SearchResultsPage() {
     const [results, setResults] = useState<SingleQueryResponse | null>(null);
     const { searchConfig } = useSearch();
 
-    const handleSearch = async (config: SingleQueryRequest) => {
+    const handleSearch = async (request: SingleQueryRequest) => {
         setLoading(true);
         try {
             // Simulated API call for now
@@ -30,13 +30,13 @@ function SearchResultsPage() {
                     { doc_id: 2, similarity_score: 0.80 },
                     { doc_id: 3, similarity_score: 0.70 }
                 ],
-                original_query: config.query,
+                original_query: request.query,
                 original_map_score: 0.78,
                 original_query_weights: {
                     "information": 0.5,
                     "retrieval": 0.5
                 },
-                expanded_query: config.query + " systems",
+                expanded_query: request.query + " systems",
                 expanded_map_score: 0.82,
                 expanded_query_weights: {
                     "information": 0.4,
@@ -57,8 +57,7 @@ function SearchResultsPage() {
         if (!query) return;
         
         // Use the stored config if available, otherwise use defaults
-        const initialConfig: SingleQueryRequest = searchConfig || {
-            query,
+        const initialConfig: QueryConfig = searchConfig || {
             is_stemming: true,
             expansion_terms_count: "all",
             is_stop_words_removal: true,
@@ -67,7 +66,10 @@ function SearchResultsPage() {
             normalization: true
         };
         
-        handleSearch(initialConfig);
+        handleSearch({
+            query,
+            config: initialConfig
+        });
     }, [query]); // Only depend on query, not searchConfig
 
     if (!query) return <Navigate to="/" />;

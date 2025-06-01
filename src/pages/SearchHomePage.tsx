@@ -5,17 +5,24 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ContentLayout from "@/layouts/ContentLayout";
 import SearchConfig from "@/components/SearchConfig";
 import BatchUpload from "@/components/BatchUpload";
-import type { SingleQueryRequest } from "@/types/search";
+import type { SingleQueryRequest, MultiQueryRequest } from "@/types/search";
 import { useSearch } from "@/contexts/SearchContext";
+import { useBatch } from "@/contexts/BatchContext";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
     const navigate = useNavigate();
-    const { searchConfig, setSearchConfig } = useSearch();
+    const { searchConfig } = useSearch();
+    const { setRequest, setIsProcessing } = useBatch();
 
-    const handleSearch = (config: SingleQueryRequest) => {
-        setSearchConfig(config);
-        navigate(`/search?query=${encodeURIComponent(config.query)}`);
+    const handleSearch = (request: SingleQueryRequest) => {
+        navigate(`/search?query=${encodeURIComponent(request.query)}`);
+    };
+
+    const handleBatchUpload = (request: MultiQueryRequest) => {
+        setRequest(request);
+        setIsProcessing(true);
+        navigate('/batch-result');
     };
 
     return (
@@ -53,7 +60,10 @@ function SearchHomePage() {
                             defaultConfig={searchConfig || undefined}
                         />
                     ) : (
-                        <BatchUpload />
+                        <BatchUpload 
+                            onUpload={handleBatchUpload}
+                            defaultConfig={searchConfig || undefined}
+                        />
                     )}
                 </div>
             </div>

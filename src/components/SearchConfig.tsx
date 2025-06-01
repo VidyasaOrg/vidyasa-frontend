@@ -9,7 +9,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import type { SingleQueryRequest, TFMethod, AdditionalTerms } from '@/types/search';
+import type { SingleQueryRequest, TFMethod, QueryConfig } from '@/types/search';
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from 'lucide-react';
 import { z } from 'zod';
 import { useSearch } from '@/contexts/SearchContext';
@@ -17,17 +17,17 @@ import { useSearch } from '@/contexts/SearchContext';
 const querySchema = z.string().min(1);
 
 interface SearchConfigProps {
-    onSearch: (config: SingleQueryRequest) => void;
+    onSearch: (request: SingleQueryRequest) => void;
     defaultQuery?: string;
-    defaultConfig?: SingleQueryRequest;
+    defaultConfig?: QueryConfig;
 }
 
 export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfig }: SearchConfigProps) {
     const { setSearchConfig } = useSearch();
-    const [config, setConfig] = useState<SingleQueryRequest>(defaultConfig || {
-        query: defaultQuery,
+    const [query, setQuery] = useState(defaultQuery);
+    const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
         is_stemming: true,
-        expansion_terms_count: 3,
+        expansion_terms_count: "all",
         is_stop_words_removal: true,
         term_frequency_method: "raw",
         idf: true,
@@ -36,44 +36,43 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
 
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [customTerms, setCustomTerms] = useState<number>(() => {
-        if (defaultConfig && typeof defaultConfig["expansion_terms_count"] === "number") {
-            return defaultConfig["expansion_terms_count"];
+        if (defaultConfig && typeof defaultConfig.expansion_terms_count === "number") {
+            return defaultConfig.expansion_terms_count;
         }
-        return 3;
+        return 5;
     });
 
     // Helper function to update both local state and context
-    const updateConfig = (newConfig: SingleQueryRequest) => {
+    const updateConfig = (newConfig: QueryConfig) => {
         setConfig(newConfig);
         setSearchConfig(newConfig);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const result = querySchema.safeParse(config.query.trim());
+        const result = querySchema.safeParse(query.trim());
         if (!result.success) {
             return;
         }
-        const trimmedConfig = {
-            ...config,
-            query: config.query.trim()
+        const request: SingleQueryRequest = {
+            query: query.trim(),
+            config: config
         };
-        updateConfig(trimmedConfig);
-        onSearch(trimmedConfig);
+        onSearch(request);
     };
 
     return (
         <form onSubmit={handleSubmit} className="w-full space-y-2">
             <div className="flex gap-2">
                 <Input
-                    value={config.query}
-                    onChange={(e) => updateConfig({ ...config, query: e.target.value })}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                     placeholder="Masukkan kata kunci pencarian"
                     className="flex-1"
                 />
                 <Button 
                     type="submit" 
-                    disabled={!querySchema.safeParse(config.query.trim()).success}
+                    disabled={!querySchema.safeParse(query.trim()).success}
                 >
                     Cari <SearchIcon className="w-4 h-4" />
                 </Button>
@@ -159,12 +158,12 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                             <label htmlFor="additional-terms" className="text-sm">Term Tambahan</label>
                             <div className="flex gap-2">
                                 <Select
-                                    value={config["expansion_terms_count"] === "all" ? "all" : "custom"}
+                                    value={config.expansion_terms_count === "all" ? "all" : "custom"}
                                     onValueChange={(value) => {
                                         if (value === "all") {
-                                            updateConfig({ ...config, "expansion_terms_count": "all" });
+                                            updateConfig({ ...config, expansion_terms_count: "all" });
                                         } else {
-                                            updateConfig({ ...config, "expansion_terms_count": customTerms });
+                                            updateConfig({ ...config, expansion_terms_count: customTerms });
                                         }
                                     }}
                                 >
@@ -176,7 +175,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                         <SelectItem value="custom">Kustom</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {config["expansion_terms_count"] !== "all" && (
+                                {config.expansion_terms_count !== "all" && (
                                     <Input
                                         type="number"
                                         min={1}
@@ -184,7 +183,7 @@ export default function SearchConfig({ onSearch, defaultQuery = '', defaultConfi
                                         onChange={(e) => {
                                             const value = parseInt(e.target.value);
                                             setCustomTerms(value);
-                                            updateConfig({ ...config, "expansion_terms_count": value });
+                                            updateConfig({ ...config, expansion_terms_count: value });
                                         }}
                                         className="w-24"
                                     />
