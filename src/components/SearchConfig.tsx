@@ -9,7 +9,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import type { SingleQueryRequest, TFMethod, AdditionalTerms, QueryConfig } from '@/types/search';
+import type { SingleQueryRequest, TFMethod, QueryConfig } from '@/types/search';
 import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from 'lucide-react';
 import { z } from 'zod';
 import { useSearch } from '@/contexts/SearchContext';
