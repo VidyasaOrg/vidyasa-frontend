@@ -27,7 +27,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
     const [isDragging, setIsDragging] = useState(false);
     const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
         is_stemming: true,
-        expansion_terms_count: "all",
+        expansion_terms_count: 3,
         is_stop_words_removal: true,
         term_frequency_method: "raw",
         idf: true,
@@ -39,7 +39,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
         if (defaultConfig && typeof defaultConfig.expansion_terms_count === "number") {
             return defaultConfig.expansion_terms_count;
         }
-        return 5;
+        return 3;
     });
 
     // Helper function to update both local state and context
