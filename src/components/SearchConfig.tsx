@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import type { TFMethod, QueryConfig } from '@/types/search';
+import type { TFMethod, QueryConfig, TermWeightingMethod } from '@/types/search';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -20,7 +20,7 @@ interface Props {
 export default function SearchConfig({ config, onConfigChange }: Props) {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [customTerms, setCustomTerms] = useState<number>(() => {
-        return typeof config.expansion_terms_count === "number" ? config.expansion_terms_count : 3;
+        return typeof config.expansion_terms_count === "number" ? config.expansion_terms_count : 1;
     });
 
     return (
@@ -59,26 +59,6 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                             />
                             <label className="text-sm" htmlFor="stopwords">Eliminasi Stop Words</label>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Checkbox
-                                className="cursor-pointer"
-                                id="idf"
-                                checked={config.idf}
-                                onCheckedChange={(checked) => 
-                                    onConfigChange({ ...config, idf: checked as boolean })}
-                            />
-                            <label className="text-sm" htmlFor="idf">Kalkulasi IDF</label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Checkbox
-                                className="cursor-pointer"
-                                id="normalization"
-                                checked={config.normalization}
-                                onCheckedChange={(checked) => 
-                                    onConfigChange({ ...config, normalization: checked as boolean })}
-                            />
-                            <label className="text-sm" htmlFor="normalization">Lakukan Normalisasi</label>
-                        </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -89,7 +69,7 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                 onValueChange={(value: TFMethod) => 
                                     onConfigChange({ ...config, term_frequency_method: value })}
                             >
-                                <SelectTrigger className='cursor-pointer'>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Pilih metode TF" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -97,6 +77,25 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                     <SelectItem value="log">Logarithmic</SelectItem>
                                     <SelectItem value="binary">Binary</SelectItem>
                                     <SelectItem value="augmented">Augmented</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="term-weighting" className="text-sm">Metode Pembobotan</label>
+                            <Select
+                                value={config.term_weighting_method}
+                                onValueChange={(value: TermWeightingMethod) => 
+                                    onConfigChange({ ...config, term_weighting_method: value })}
+                            >
+                                <SelectTrigger className="cursor-pointer">
+                                    <SelectValue placeholder="Pilih metode pembobotan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="tf">TF</SelectItem>
+                                    <SelectItem value="idf">IDF</SelectItem>
+                                    <SelectItem value="tf_idf">TF-IDF</SelectItem>
+                                    <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -114,7 +113,7 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                         }
                                     }}
                                 >
-                                    <SelectTrigger>
+                                    <SelectTrigger className="cursor-pointer">
                                         <SelectValue placeholder="Pilih jumlah term" />
                                     </SelectTrigger>
                                     <SelectContent>

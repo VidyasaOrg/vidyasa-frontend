@@ -5,6 +5,9 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 interface RankedDocumentsProps {
     originalRanking: RankedDocument[];
@@ -14,30 +17,70 @@ interface RankedDocumentsProps {
 }
 
 function DocumentList({ documents }: { documents: RankedDocument[] }) {
-    // Find max similarity score for relative bar widths
+    const [currentPage, setCurrentPage] = useState(1);
+    const documentsPerPage = 10;
     const maxScore = Math.max(...documents.map(doc => doc.similarity_score));
+    
+    // Calculate pagination
+    const totalPages = Math.ceil(documents.length / documentsPerPage);
+    const startIndex = (currentPage - 1) * documentsPerPage;
+    const endIndex = startIndex + documentsPerPage;
+    const currentDocuments = documents.slice(startIndex, endIndex);
 
     return (
         <div className="space-y-4">
-            {documents.map((doc) => (
-                <div key={doc.doc_id} className="p-4 border rounded-lg space-y-2">
-                    <div className="flex justify-between items-center">
-                        <h4 className="font-medium">Dokumen {doc.doc_id}</h4>
-                        <span className="text-sm tabular-nums">
-                            Skor: {doc.similarity_score.toFixed(3)}
-                        </span>
+            <div className="space-y-4">
+                {currentDocuments.map((doc) => (
+                    <div key={doc.doc_id} className="p-4 border rounded-lg space-y-2">
+                        <div className="flex justify-between items-center">
+                            <div className="space-y-1">
+                                <h4 className="font-medium">Dokumen {doc.doc_id}</h4>
+                                {doc.doc_title && (
+                                    <p className="text-sm text-muted-foreground">{doc.doc_title}</p>
+                                )}
+                            </div>
+                            <span className="text-sm tabular-nums">
+                                Skor: {doc.similarity_score.toFixed(3)}
+                            </span>
+                        </div>
+                        <div className="h-2 bg-primary/10 rounded-full">
+                            <div 
+                                className="h-full bg-primary rounded-full"
+                                style={{ 
+                                    width: `${(doc.similarity_score / maxScore) * 100}%`,
+                                    transition: 'width 0.3s ease-in-out'
+                                }}
+                            />
+                        </div>
                     </div>
-                    <div className="h-2 bg-primary/10 rounded-full">
-                        <div 
-                            className="h-full bg-primary rounded-full"
-                            style={{ 
-                                width: `${(doc.similarity_score / maxScore) * 100}%`,
-                                transition: 'width 0.3s ease-in-out'
-                            }}
-                        />
-                    </div>
+                ))}
+            </div>
+            
+            {totalPages > 1 && (
+                <div className="flex justify-between items-center pt-4">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                    >
+                        <ChevronLeftIcon className="w-4 h-4" />
+                        Sebelumnya
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                        Page {currentPage} dari {totalPages}
+                    </span>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                    >
+                        Selanjutnya
+                        <ChevronRightIcon className="w-4 h-4" />
+                    </Button>
                 </div>
-            ))}
+            )}
         </div>
     );
 }
@@ -48,6 +91,11 @@ export default function RankedDocuments({
     originalMapScore,
     expandedMapScore
 }: RankedDocumentsProps) {
+
+    useEffect(() => {
+        console.log(originalRanking);
+    }, [originalRanking]);
+
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">

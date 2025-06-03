@@ -17,12 +17,11 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
-        is_stemming: true,
-        expansion_terms_count: 3,
+        is_stemming: false,
+        expansion_terms_count: 1,
         is_stop_words_removal: true,
         term_frequency_method: "raw",
-        idf: true,
-        normalization: true
+        term_weighting_method: "tf_idf"
     });
 
     const updateConfig = (newConfig: QueryConfig) => {
@@ -112,7 +111,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
                             htmlFor="file-upload" 
                             className="text-sm font-medium hover:cursor-pointer hover:text-primary/90 transition-colors"
                         >
-                            {selectedFile ? selectedFile.name : "Upload file JSON"}
+                            {selectedFile ? selectedFile.name : "Upload file"}
                         </Label>
                         <p className="text-sm text-muted-foreground">
                             Klik untuk memilih file atau drag and drop

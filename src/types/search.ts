@@ -10,14 +10,14 @@ export interface TermLocations {
 
 export type TFMethod = 'raw' | 'log' | 'binary' | 'augmented';
 export type AdditionalTerms = number | 'all';
+export type TermWeightingMethod = 'tf' | 'idf' | 'tf_idf' | 'tf_idf_norm';
 
 export interface QueryConfig {
     is_stemming: boolean;
     expansion_terms_count: AdditionalTerms;
     is_stop_words_removal: boolean;
     term_frequency_method: TFMethod;
-    idf: boolean;
-    normalization: boolean;
+    term_weighting_method: TermWeightingMethod;
 }
 
 export interface SingleQueryRequest {
@@ -32,6 +32,7 @@ export interface MultiQueryRequest {
 
 export interface RankedDocument {
     doc_id: number;
+    doc_title: string;
     similarity_score: number;
 }
 

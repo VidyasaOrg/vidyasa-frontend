@@ -19,12 +19,11 @@ export default function InteractiveSearch({ onSearch, defaultQuery = '', default
     const { setSearchConfig } = useSearch();
     const [query, setQuery] = useState(defaultQuery);
     const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
-        is_stemming: true,
-        expansion_terms_count: 3,
+        is_stemming: false,
+        expansion_terms_count: 1,
         is_stop_words_removal: true,
         term_frequency_method: "raw",
-        idf: true,
-        normalization: true
+        term_weighting_method: "tf_idf"
     });
 
     const updateConfig = (newConfig: QueryConfig) => {

@@ -34,12 +34,11 @@ function SearchResultsPage() {
         
         // Use the stored config if available, otherwise use defaults
         const initialConfig: QueryConfig = searchConfig || {
-            is_stemming: true,
-            expansion_terms_count: "all",
+            is_stemming: false,
+            expansion_terms_count: 1,
             is_stop_words_removal: true,
             term_frequency_method: "raw",
-            idf: true,
-            normalization: true
+            term_weighting_method: "tf_idf"
         };
         
         handleSearch({
