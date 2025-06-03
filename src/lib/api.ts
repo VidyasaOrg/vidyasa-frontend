@@ -74,7 +74,7 @@ export const batchSearch = async (request: MultiQueryRequest): Promise<{ status:
         formData.append('term_frequency_method', request.config.term_frequency_method);
         formData.append('term_weighting_method', request.config.term_weighting_method);
         formData.append('expansion_terms_count', request.config.expansion_terms_count.toString());
-        formData.append('is_queries_from_cisi', 'false');
+        formData.append('is_queries_from_cisi', 'true');
 
         const response = await fetch('http://localhost:8000/query_batch/', {
             method: 'POST',

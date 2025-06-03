@@ -88,8 +88,6 @@ function SearchResultsPage() {
                             <RankedDocuments 
                                 originalRanking={results.original_ranking}
                                 expandedRanking={results.expanded_ranking}
-                                originalMapScore={results.original_map_score}
-                                expandedMapScore={results.expanded_map_score}
                             />
 
                             <QueryWeights 

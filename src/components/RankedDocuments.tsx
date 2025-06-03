@@ -6,14 +6,14 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 interface RankedDocumentsProps {
     originalRanking: RankedDocument[];
     expandedRanking: RankedDocument[];
-    originalMapScore: number;
-    expandedMapScore: number;
+    originalMapScore?: number;
+    expandedMapScore?: number;
 }
 
 function DocumentList({ documents }: { documents: RankedDocument[] }) {
@@ -92,22 +92,20 @@ export default function RankedDocuments({
     expandedMapScore
 }: RankedDocumentsProps) {
 
-    useEffect(() => {
-        console.log(originalRanking);
-    }, [originalRanking]);
-
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Peringkat Dokumen</h3>
-                <div className="flex gap-8">
-                    <div className="text-sm">
-                        MAP Awal: <span className="font-medium">{originalMapScore.toFixed(3)}</span>
+                {originalMapScore && expandedMapScore && (
+                    <div className="flex gap-8">
+                        <div className="text-sm">
+                            MAP Awal: <span className="font-medium">{originalMapScore.toFixed(3)}</span>
+                        </div>
+                        <div className="text-sm">
+                            MAP Ekspansi: <span className="font-medium">{expandedMapScore.toFixed(3)}</span>
+                        </div>
                     </div>
-                    <div className="text-sm">
-                        MAP Ekspansi: <span className="font-medium">{expandedMapScore.toFixed(3)}</span>
-                    </div>
-                </div>
+                )}
             </div>
 
             <Tabs defaultValue="original">
