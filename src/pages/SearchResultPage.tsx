@@ -46,7 +46,7 @@ function SearchResultsPage() {
             query,
             config: initialConfig
         });
-    }, [query]); // Only depend on query, not searchConfig
+    }, [query]);
 
     if (!query) return <Navigate to="/" />;
 
@@ -86,16 +86,16 @@ function SearchResultsPage() {
                                 </div>
                             </div>
 
-                            <QueryWeights 
-                                originalWeights={results.original_query_weights}
-                                expandedWeights={results.expanded_query_weights}
-                            />
-
                             <RankedDocuments 
                                 originalRanking={results.original_ranking}
                                 expandedRanking={results.expanded_ranking}
                                 originalMapScore={results.original_map_score}
                                 expandedMapScore={results.expanded_map_score}
+                            />
+
+                            <QueryWeights 
+                                originalWeights={results.original_query_weights}
+                                expandedWeights={results.expanded_query_weights}
                             />
                         </div>
                     )}

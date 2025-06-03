@@ -1,51 +1,38 @@
-import type { TermLocations, SingleQueryRequest, SingleQueryResponse, MultiQueryRequest, MultiQueryResponse } from "@/types/search";
+import type { SingleQueryRequest, SingleQueryResponse, MultiQueryRequest, MultiQueryResponse, TermInfo, DocumentInfo } from "@/types/search";
+import { API_CONFIG } from "@/config/api";
 
-export const termSearch = async (term: string): Promise<{ status: number; data?: number[] }> => {
-    const delay = Math.random() * 5000 + 500;
-    await new Promise(resolve => setTimeout(resolve, delay));
+export const termSearch = async (term: string): Promise<{ status: number; data?: TermInfo }> => {
+    try {
+        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.termInfo(term)}`);
+        const status = response.status;
 
-    if (Math.random() < 0.1) {
+        if (status === 200) {
+            const data = await response.json();
+            return { status, data };
+        }
+
+        return { status };
+    } catch (error) {
+        console.error('Error fetching term info:', error);
         return { status: 500 };
     }
-
-    if (Math.random() < 0.3) {
-        return { status: 404 };
-    }
-
-    const numDocs = Math.floor(Math.random() * 10) + 1;
-    const docs = Array.from({ length: numDocs }, () => Math.floor(Math.random() * 100) + 1)
-        .sort((a, b) => a - b);
-
-    return { status: 200, data: docs };
 };
 
-export const docIdSearch = async (docId: string): Promise<{ status: number; data?: TermLocations }> => {
-    const delay = Math.random() * 5000 + 500;
-    await new Promise(resolve => setTimeout(resolve, delay));
+export const docIdSearch = async (docId: string): Promise<{ status: number; data?: DocumentInfo }> => {
+    try {
+        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.documentInfo(docId)}`);
+        const status = response.status;
 
-    if (Math.random() < 0.1) {
+        if (status === 200) {
+            const data = await response.json();
+            return { status, data };
+        }
+
+        return { status };
+    } catch (error) {
+        console.error('Error fetching document info:', error);
         return { status: 500 };
     }
-
-    if (Math.random() < 0.3) {
-        return { status: 404 };
-    }
-
-    // Generate random terms and their positions
-    const terms = ["hello", "world", "example", "document", "text", "content"];
-    const result: TermLocations = {};
-    const numTerms = Math.floor(Math.random() * 4) + 2; // 2-5 terms
-    
-    for (let i = 0; i < numTerms; i++) {
-        const term = terms[Math.floor(Math.random() * terms.length)];
-        const numPositions = Math.floor(Math.random() * 5) + 1; // 1-5 positions
-        const positions = Array.from({ length: numPositions }, 
-            () => Math.floor(Math.random() * 100) + 1)
-            .sort((a, b) => a - b);
-        result[term] = positions;
-    }
-
-    return { status: 200, data: result };
 };
 
 export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQueryResponse> => {

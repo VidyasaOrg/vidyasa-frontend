@@ -57,4 +57,36 @@ export interface MultiQueryResponse {
 export interface APIError {
     status: 400 | 500;
     message: string;
+}
+
+export interface TermDocument {
+    doc_id: number;
+    raw_tf: number;
+    tf: number;
+    weight: number;
+    positions: number[];
+    document_preview: string;
+    idf: number;
+}
+
+export interface TermInfo {
+    term: string;
+    document_frequency: number;
+    total_occurrences: number;
+    documents: TermDocument[];
+}
+
+export interface DocumentTerm {
+    term: string;
+    raw_tf: number;
+    weight: number;
+    positions: number[];
+}
+
+export interface DocumentInfo {
+    length: number;
+    unique_terms: number;
+    content: string;
+    terms: DocumentTerm[];
+    total_terms: number;
 } 
