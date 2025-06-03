@@ -49,6 +49,7 @@ export default function BatchResultPage() {
                         });
                 }
             } catch (error) {
+                console.error('Error processing request:', error);
                 setError({ 
                     status: 500, 
                     message: "Unexpected error" 

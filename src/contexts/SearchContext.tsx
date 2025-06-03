@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { SingleQueryRequest, QueryConfig } from '@/types/search';
+import type { QueryConfig } from '@/types/search';
 
 interface SearchContextType {
     searchConfig: QueryConfig | null;

@@ -67,12 +67,15 @@ function InverseDocIdPage() {
                     <h2 className="text-xl font-bold">Masukkan Document ID</h2>
                     <div className="flex gap-4">
                         <Input
+                            type="number"
                             value={docId}
                             onChange={(e) => {
-                                const newValue = e.target.value.trim();
-                                setDocId(newValue);
+                                const value = e.target.value;
+                                if (value === '' || /^\d+$/.test(value)) {
+                                    setDocId(value);
+                                }
                             }}
-                            placeholder="Masukkan ID dokumen"
+                            placeholder="Masukkan ID dokumen (angka)"
                             className="flex-1"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && docId.trim()) {
@@ -131,14 +134,19 @@ function InverseDocIdPage() {
                                                         key={term.term}
                                                         className="p-3 bg-card rounded-lg border shadow-sm flex justify-between items-center"
                                                     >
-                                                        <div className="flex gap-4 items-center">
-                                                            <span className="font-medium">{term.term}</span>
-                                                            <span className="text-sm text-muted-foreground">
-                                                                Frekuensi: {term.raw_tf}
-                                                            </span>
+                                                        <div className="flex flex-col gap-2 flex-1">
+                                                            <div className="flex gap-4 items-center">
+                                                                <span className="font-medium">{term.term}</span>
+                                                                <span className="text-sm text-muted-foreground">
+                                                                    Frekuensi: {term.raw_tf}
+                                                                </span>
+                                                            </div>
+                                                            <div className="text-sm text-muted-foreground">
+                                                                Posisi: {term.positions.join(", ")}
+                                                            </div>
                                                         </div>
                                                         <div className="text-sm text-muted-foreground">
-                                                            Bobot: {term.weight.toFixed(4)}
+                                                            Bobot Kata: {term.weight.toFixed(4)}
                                                         </div>
                                                     </div>
                                             ))}

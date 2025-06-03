@@ -6,8 +6,8 @@ function NavBar() {
 
     const navItems = [
         { name: "Search", path: "/" },
-        { name: "Inverse Doc Term", path: "/inverse-doc-term" },
-        { name: "Inverse Doc ID", path: "/inverse-doc-id" }
+        { name: "Inverse Doc ID", path: "/inverse-doc-id" },
+        { name: "Inverse Doc Term", path: "/inverse-doc-term" }
     ];
 
     return (
