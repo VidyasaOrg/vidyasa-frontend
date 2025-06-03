@@ -30,12 +30,12 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
     };
 
     const validateAndSetFile = (file: File) => {
-        if (file.type === "application/json") {
+        if (file.type === "text/plain" || file.name.endsWith('.txt')) {
             setSelectedFile(file);
             return true;
         } else {
             setSelectedFile(null);
-            alert("Please select a JSON file");
+            alert("Please select a text (.txt) file");
             return false;
         }
     };
@@ -114,13 +114,13 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
                             {selectedFile ? selectedFile.name : "Upload file"}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                            Klik untuk memilih file atau drag and drop
+                            Klik untuk memilih file .txt atau drag and drop
                         </p>
                     </div>
                     <input
                         id="file-upload"
                         type="file"
-                        accept=".json,application/json"
+                        accept=".txt,text/plain"
                         onChange={handleFileChange}
                         className="hidden"
                     />

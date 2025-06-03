@@ -66,29 +66,31 @@ export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQ
 };
 
 export const batchSearch = async (request: MultiQueryRequest): Promise<{ status: number; data?: MultiQueryResponse }> => {
-    // Simulate API call
-    await new Promise(res => setTimeout(res, 2000));
+    try {
+        const formData = new FormData();
+        formData.append('file', request.query);
+        formData.append('is_stemming', request.config.is_stemming.toString());
+        formData.append('is_stop_words_removal', request.config.is_stop_words_removal.toString());
+        formData.append('term_frequency_method', request.config.term_frequency_method);
+        formData.append('term_weighting_method', request.config.term_weighting_method);
+        formData.append('expansion_terms_count', request.config.expansion_terms_count.toString());
+        formData.append('is_queries_from_cisi', 'false');
 
-    // Randomly simulate different scenarios
-    const random = Math.random();
-    
-    if (random < 0.2) {
-        // 20% chance of 400 error
-        return { 
-            status: 400
-        };
-    } else if (random < 0.3) {
-        // 10% chance of 500 error
-        return { 
-            status: 500
-        };
-    } else {
-        // 70% chance of success - return the same file back
-        return { 
-            status: 200,
-            data: { 
-                result: request.query 
-            }
-        };
+        const response = await fetch('http://localhost:8000/query_batch/', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const status = response.status;
+
+        if (status === 200) {
+            const data = await response.json();
+            return { status, data };
+        }
+
+        return { status };
+    } catch (error) {
+        console.error('Error during batch search:', error);
+        return { status: 500 };
     }
 };

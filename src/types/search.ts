@@ -52,7 +52,7 @@ export interface SingleQueryResponse {
 }
 
 export interface MultiQueryResponse {
-    result: File;
+    results: SingleQueryResponse[];
 }
 
 export interface APIError {
