@@ -100,6 +100,17 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            <div className="flex items-center gap-2 col-span-2">
+                                <Checkbox
+                                    className="cursor-pointer"
+                                    id="cosine-query"
+                                    checked={config.cosine_normalization_query ?? false}
+                                    onCheckedChange={(checked) =>
+                                        onConfigChange({ ...config, cosine_normalization_query: checked as boolean })
+                                    }
+                                />
+                                <label className="text-sm" htmlFor="cosine-query">Cosine Normalization</label>
+                            </div>
                             <div className="flex flex-col gap-2 col-span-2">
                                 <label htmlFor="additional-terms" className="text-sm">Term Tambahan</label>
                                 <div className="flex gap-2">
@@ -135,17 +146,6 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                         />
                                     )}
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2 col-span-2">
-                                <Checkbox
-                                    className="cursor-pointer"
-                                    id="cosine-query"
-                                    checked={config.cosine_normalization_query ?? false}
-                                    onCheckedChange={(checked) =>
-                                        onConfigChange({ ...config, cosine_normalization_query: checked as boolean })
-                                    }
-                                />
-                                <label className="text-sm" htmlFor="cosine-query">Cosine Normalization</label>
                             </div>
                         </div>
                     </div>
