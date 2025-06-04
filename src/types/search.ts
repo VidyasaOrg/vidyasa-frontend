@@ -20,8 +20,8 @@ export interface QueryDocumentConfig {
     query_term_weighting_method: TermWeightingMethod;
     document_term_frequency_method: TFMethod;
     document_term_weighting_method: TermWeightingMethod;
-    cosine_similarity_query?: boolean; 
-    cosine_similarity_document?: boolean;
+    cosine_normalization_query?: boolean; 
+    cosine_normalization_document?: boolean;
 }
 
 export interface SingleQueryRequest {

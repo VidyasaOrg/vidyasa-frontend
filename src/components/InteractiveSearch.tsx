@@ -26,8 +26,8 @@ export default function InteractiveSearch({ onSearch, defaultQuery = '', default
         query_term_weighting_method: "tf_idf",
         document_term_frequency_method: "raw",
         document_term_weighting_method: "tf_idf",
-        cosine_similarity_query: false,
-        cosine_similarity_document: false,
+        cosine_normalization_query: false,
+        cosine_normalization_document: false,
     });
 
     const updateConfig = (newConfig: QueryDocumentConfig) => {

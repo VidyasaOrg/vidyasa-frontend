@@ -141,12 +141,12 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                 <Checkbox
                                     className="cursor-pointer"
                                     id="cosine-query"
-                                    checked={config.cosine_similarity_query ?? false}
+                                    checked={config.cosine_normalization_query ?? false}
                                     onCheckedChange={(checked) =>
-                                        onConfigChange({ ...config, cosine_similarity_query: checked as boolean })
+                                        onConfigChange({ ...config, cosine_normalization_query: checked as boolean })
                                     }
                                 />
-                                <label className="text-sm" htmlFor="cosine-query">Cosine Similarity</label>
+                                <label className="text-sm" htmlFor="cosine-query">Cosine Normalization</label>
                             </div>
                         </div>
                     </div>
@@ -195,12 +195,12 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                 <Checkbox
                                     className="cursor-pointer"
                                     id="cosine-document"
-                                    checked={config.cosine_similarity_document ?? false}
+                                    checked={config.cosine_normalization_document ?? false}
                                     onCheckedChange={(checked) =>
-                                        onConfigChange({ ...config, cosine_similarity_document: checked as boolean })
+                                        onConfigChange({ ...config, cosine_normalization_document: checked as boolean })
                                     }
                                 />
-                                <label className="text-sm" htmlFor="cosine-document">Cosine Similarity</label>
+                                <label className="text-sm" htmlFor="cosine-document">Cosine Normalization</label>
                             </div>
                         </div>
                     </div>
