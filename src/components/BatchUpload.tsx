@@ -24,6 +24,8 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
         query_term_weighting_method: "tf_idf",
         document_term_frequency_method: "raw",
         document_term_weighting_method: "tf_idf",
+        cosine_similarity_query: false,
+        cosine_similarity_document: false,
     });
 
     const updateConfig = (newConfig: QueryDocumentConfig) => {
