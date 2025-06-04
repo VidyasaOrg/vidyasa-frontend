@@ -1,39 +1,69 @@
-import type { SingleQueryRequest, SingleQueryResponse, MultiQueryRequest, MultiQueryResponse, TermInfo, DocumentInfo } from "@/types/search";
+import type { SingleQueryRequest, SingleQueryResponse, MultiQueryRequest, MultiQueryResponse, DocumentInfo } from "@/types/search";
 import { API_CONFIG } from "@/config/api";
 
-export const termSearch = async (term: string): Promise<{ status: number; data?: TermInfo }> => {
-    try {
-        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.termInfo(term)}`);
-        const status = response.status;
+export async function termSearch(term: string) {
+    const res = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.termInfo(term)}`);
+    const data = await res.json();
 
-        if (status === 200) {
-            const data = await response.json();
-            return { status, data };
-        }
-
-        return { status };
-    } catch (error) {
-        console.error('Error fetching term info:', error);
-        return { status: 500 };
+    if (res.status === 200) {
+        const documents = Object.entries(data.term_postings || {}).map(
+            ([doc_id, positions]) => {
+                const posArr = Array.isArray(positions) ? positions as number[] : [];
+                return {
+                    doc_id: Number(doc_id),
+                    raw_tf: posArr.length,
+                    tf: posArr.length, 
+                    weight: 1,
+                    positions: posArr,
+                    document_preview: "", 
+                    idf: 1, 
+                };
+            }
+        );
+        return {
+            status: 200,
+            data: {
+                term: data.term || term,
+                document_frequency: documents.length,
+                total_occurrences: documents.reduce((sum, d) => sum + d.raw_tf, 0),
+                documents,
+            },
+        };
     }
-};
+    return { status: res.status, data: null };
+}
 
-export const docIdSearch = async (docId: string): Promise<{ status: number; data?: DocumentInfo }> => {
-    try {
-        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.documentInfo(docId)}`);
-        const status = response.status;
+export async function docIdSearch(docId: string) {
+    const res = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.documentInfo(docId)}`);
+    const data = await res.json();
 
-        if (status === 200) {
-            const data = await response.json();
-            return { status, data };
-        }
-
-        return { status };
-    } catch (error) {
-        console.error('Error fetching document info:', error);
-        return { status: 500 };
+    // Transform backend response to DocumentInfo
+    if (res.status === 200) {
+        // Example transformation, adjust as needed
+        const terms: DocumentInfo["terms"] = Object.entries(data.term_postings || {}).map(
+            ([term, positions]) => {
+                const posArr = Array.isArray(positions) ? positions as number[] : [];
+                return {
+                    term,
+                    raw_tf: posArr.length,
+                    weight: 1, // or calculate if available
+                    positions: posArr,
+                };
+            }
+        );
+        return {
+            status: 200,
+            data: {
+                length: terms.reduce((sum, t) => sum + t.raw_tf, 0),
+                unique_terms: terms.length,
+                content: "", // fill if available from backend
+                terms,
+                total_terms: terms.reduce((sum, t) => sum + t.raw_tf, 0),
+            },
+        };
     }
-};
+    return { status: res.status, data: null };
+}
 
 export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQueryResponse> => {
     try {

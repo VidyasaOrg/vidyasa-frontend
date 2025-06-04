@@ -19,6 +19,7 @@ function InverseDocTermPage() {
 
         try {
             const response = await termSearch(term);
+            console.log("API response:", response);
 
             switch (response.status) {
                 case 200:
@@ -121,9 +122,6 @@ function InverseDocTermPage() {
                                             >
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="font-semibold">Dokumen {doc.doc_id}</div>
-                                                    <div className="text-sm text-muted-foreground">
-                                                        Bobot Kata: {doc.weight.toFixed(4)}
-                                                    </div>
                                                 </div>
                                                 <p className="text-sm text-muted-foreground whitespace-pre-line">
                                                     {doc.document_preview}

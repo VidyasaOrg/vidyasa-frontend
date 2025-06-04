@@ -123,33 +123,35 @@ function InverseDocIdPage() {
                                             {searchState.data.content}
                                         </p>
                                     </div>
-
                                     <div className="flex flex-col gap-4">
                                         <h3 className="font-semibold">Term dalam Dokumen:</h3>
                                         <div className="grid gap-3">
-                                            {searchState.data.terms
-                                                .sort((a, b) => b.weight - a.weight)
-                                                .map((term) => (
-                                                    <div 
-                                                        key={term.term}
-                                                        className="p-3 bg-card rounded-lg border shadow-sm flex justify-between items-center"
-                                                    >
-                                                        <div className="flex flex-col gap-2 flex-1">
-                                                            <div className="flex gap-4 items-center">
-                                                                <span className="font-medium">{term.term}</span>
-                                                                <span className="text-sm text-muted-foreground">
-                                                                    Frekuensi: {term.raw_tf}
-                                                                </span>
-                                                            </div>
-                                                            <div className="text-sm text-muted-foreground">
-                                                                Posisi: {term.positions.join(", ")}
+                                            {Array.isArray(searchState.data.terms) && searchState.data.terms.length > 0 ? (
+                                                searchState.data.terms
+                                                    .sort((a, b) => b.weight - a.weight)
+                                                    .map((term) => (
+                                                        <div 
+                                                            key={term.term}
+                                                            className="p-3 bg-card rounded-lg border shadow-sm flex justify-between items-center"
+                                                        >
+                                                            <div className="flex flex-col gap-2 flex-1">
+                                                                <div className="flex gap-4 items-center">
+                                                                    <span className="font-medium">{term.term}</span>
+                                                                    <span className="text-sm text-muted-foreground">
+                                                                        Frekuensi: {term.raw_tf}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="text-sm text-muted-foreground">
+                                                                    Posisi: {term.positions.join(", ")}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className="text-sm text-muted-foreground">
-                                                            Bobot Kata: {term.weight.toFixed(4)}
-                                                        </div>
-                                                    </div>
-                                            ))}
+                                                ))
+                                            ) : (
+                                                <div className="text-muted-foreground text-sm">
+                                                    Tidak ada data term untuk dokumen ini.
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
