@@ -128,7 +128,7 @@ function InverseDocIdPage() {
                                         <div className="grid gap-3">
                                             {Array.isArray(searchState.data.terms) && searchState.data.terms.length > 0 ? (
                                                 searchState.data.terms
-                                                    .sort((a, b) => b.weight - a.weight)
+                                                    .sort((a, b) => b.raw_tf - a.raw_tf)
                                                     .map((term) => (
                                                         <div 
                                                             key={term.term}
