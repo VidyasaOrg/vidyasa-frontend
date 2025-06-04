@@ -44,7 +44,7 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                 className="cursor-pointer"
                                 id="stemming"
                                 checked={config.is_stemming}
-                                onCheckedChange={(checked) => 
+                                onCheckedChange={(checked) =>
                                     onConfigChange({ ...config, is_stemming: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="stemming">Lakukan Stemming</label>
@@ -54,86 +54,131 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                 className="cursor-pointer"
                                 id="stopwords"
                                 checked={config.is_stop_words_removal}
-                                onCheckedChange={(checked) => 
+                                onCheckedChange={(checked) =>
                                     onConfigChange({ ...config, is_stop_words_removal: checked as boolean })}
                             />
                             <label className="text-sm" htmlFor="stopwords">Eliminasi Stop Words</label>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="tf" className="text-sm">Metode TF</label>
-                            <Select
-                                value={config.term_frequency_method}
-                                onValueChange={(value: TFMethod) => 
-                                    onConfigChange({ ...config, term_frequency_method: value })}
-                            >
-                                <SelectTrigger className="cursor-pointer">
-                                    <SelectValue placeholder="Pilih metode TF" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="raw">Raw</SelectItem>
-                                    <SelectItem value="log">Logarithmic</SelectItem>
-                                    <SelectItem value="binary">Binary</SelectItem>
-                                    <SelectItem value="augmented">Augmented</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="term-weighting" className="text-sm">Metode Pembobotan</label>
-                            <Select
-                                value={config.term_weighting_method}
-                                onValueChange={(value: TermWeightingMethod) => 
-                                    onConfigChange({ ...config, term_weighting_method: value })}
-                            >
-                                <SelectTrigger className="cursor-pointer">
-                                    <SelectValue placeholder="Pilih metode pembobotan" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="tf">TF</SelectItem>
-                                    <SelectItem value="idf">IDF</SelectItem>
-                                    <SelectItem value="tf_idf">TF-IDF</SelectItem>
-                                    <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="additional-terms" className="text-sm">Term Tambahan</label>
-                            <div className="flex gap-2">
+                    {/* Query Weighting Section */}
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-base">Query Weighting</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="query-tf" className="text-sm">Metode TF</label>
                                 <Select
-                                    value={config.expansion_terms_count === "all" ? "all" : "custom"}
-                                    onValueChange={(value) => {
-                                        if (value === "all") {
-                                            onConfigChange({ ...config, expansion_terms_count: "all" });
-                                        } else {
-                                            onConfigChange({ ...config, expansion_terms_count: customTerms });
-                                        }
-                                    }}
+                                    value={config.query_term_frequency_method}
+                                    onValueChange={(value: TFMethod) =>
+                                        onConfigChange({ ...config, query_term_frequency_method: value })}
                                 >
                                     <SelectTrigger className="cursor-pointer">
-                                        <SelectValue placeholder="Pilih jumlah term" />
+                                        <SelectValue placeholder="Pilih metode TF" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="all">Semua Term</SelectItem>
-                                        <SelectItem value="custom">Kustom</SelectItem>
+                                        <SelectItem value="raw">Raw</SelectItem>
+                                        <SelectItem value="log">Logarithmic</SelectItem>
+                                        <SelectItem value="binary">Binary</SelectItem>
+                                        <SelectItem value="augmented">Augmented</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {config.expansion_terms_count !== "all" && (
-                                    <Input
-                                        type="number"
-                                        min={1}
-                                        value={customTerms}
-                                        onChange={(e) => {
-                                            const value = parseInt(e.target.value);
-                                            setCustomTerms(value);
-                                            onConfigChange({ ...config, expansion_terms_count: value });
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="query-term-weighting" className="text-sm">Metode Pembobotan</label>
+                                <Select
+                                    value={config.query_term_weighting_method}
+                                    onValueChange={(value: TermWeightingMethod) =>
+                                        onConfigChange({ ...config, query_term_weighting_method: value })}
+                                >
+                                    <SelectTrigger className="cursor-pointer">
+                                        <SelectValue placeholder="Pilih metode pembobotan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="tf">TF</SelectItem>
+                                        <SelectItem value="idf">IDF</SelectItem>
+                                        <SelectItem value="tf_idf">TF-IDF</SelectItem>
+                                        <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex flex-col gap-2 col-span-2">
+                                <label htmlFor="additional-terms" className="text-sm">Term Tambahan</label>
+                                <div className="flex gap-2">
+                                    <Select
+                                        value={config.expansion_terms_count === "all" ? "all" : "custom"}
+                                        onValueChange={(value) => {
+                                            if (value === "all") {
+                                                onConfigChange({ ...config, expansion_terms_count: "all" });
+                                            } else {
+                                                onConfigChange({ ...config, expansion_terms_count: customTerms });
+                                            }
                                         }}
-                                        className="w-24"
-                                    />
-                                )}
+                                    >
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Pilih jumlah term" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">Semua Term</SelectItem>
+                                            <SelectItem value="custom">Kustom</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {config.expansion_terms_count !== "all" && (
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            value={customTerms}
+                                            onChange={(e) => {
+                                                const value = parseInt(e.target.value);
+                                                setCustomTerms(value);
+                                                onConfigChange({ ...config, expansion_terms_count: value });
+                                            }}
+                                            className="w-24"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Document Weighting Section */}
+                    <div className="space-y-2 pt-4 border-t">
+                        <h3 className="font-semibold text-base">Document Weighting</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="doc-tf" className="text-sm">Metode TF</label>
+                                <Select
+                                    value={config.document_term_frequency_method}
+                                    onValueChange={(value: TFMethod) =>
+                                        onConfigChange({ ...config, document_term_frequency_method: value })}
+                                >
+                                    <SelectTrigger className="cursor-pointer">
+                                        <SelectValue placeholder="Pilih metode TF" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="raw">Raw</SelectItem>
+                                        <SelectItem value="log">Logarithmic</SelectItem>
+                                        <SelectItem value="binary">Binary</SelectItem>
+                                        <SelectItem value="augmented">Augmented</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label htmlFor="doc-term-weighting" className="text-sm">Metode Pembobotan</label>
+                                <Select
+                                    value={config.document_term_weighting_method}
+                                    onValueChange={(value: TermWeightingMethod) =>
+                                        onConfigChange({ ...config, document_term_weighting_method: value })}
+                                >
+                                    <SelectTrigger className="cursor-pointer">
+                                        <SelectValue placeholder="Pilih metode pembobotan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="tf">TF</SelectItem>
+                                        <SelectItem value="idf">IDF</SelectItem>
+                                        <SelectItem value="tf_idf">TF-IDF</SelectItem>
+                                        <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
                     </div>
@@ -141,4 +186,5 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
             )}
         </div>
     );
-} 
+}
+// ...existing code...

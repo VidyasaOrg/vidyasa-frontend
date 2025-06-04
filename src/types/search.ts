@@ -16,8 +16,10 @@ export interface QueryConfig {
     is_stemming: boolean;
     expansion_terms_count: AdditionalTerms;
     is_stop_words_removal: boolean;
-    term_frequency_method: TFMethod;
-    term_weighting_method: TermWeightingMethod;
+    query_term_frequency_method: TFMethod;
+    query_term_weighting_method: TermWeightingMethod;
+    document_term_frequency_method: TFMethod;
+    document_term_weighting_method: TermWeightingMethod;
 }
 
 export interface SingleQueryRequest {

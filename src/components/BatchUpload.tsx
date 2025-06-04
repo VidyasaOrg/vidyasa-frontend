@@ -20,8 +20,10 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
         is_stemming: false,
         expansion_terms_count: 1,
         is_stop_words_removal: true,
-        term_frequency_method: "raw",
-        term_weighting_method: "tf_idf"
+        query_term_frequency_method: "raw",
+        query_term_weighting_method: "tf_idf",
+        document_term_frequency_method: "raw",
+        document_term_weighting_method: "tf_idf",
     });
 
     const updateConfig = (newConfig: QueryConfig) => {
