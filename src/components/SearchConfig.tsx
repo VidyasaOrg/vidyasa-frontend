@@ -8,13 +8,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import type { TFMethod, QueryConfig, TermWeightingMethod } from '@/types/search';
+import type { TFMethod, QueryDocumentConfig, TermWeightingMethod } from '@/types/search';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface Props {
-    config: QueryConfig;
-    onConfigChange: (config: QueryConfig) => void;
+    config: QueryDocumentConfig;
+    onConfigChange: (config: QueryDocumentConfig) => void;
 }
 
 export default function SearchConfig({ config, onConfigChange }: Props) {
@@ -137,6 +137,17 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                     )}
                                 </div>
                             </div>
+                            <div className="flex items-center gap-2 col-span-2">
+                                <Checkbox
+                                    className="cursor-pointer"
+                                    id="cosine-query"
+                                    checked={config.cosine_similarity_query ?? false}
+                                    onCheckedChange={(checked) =>
+                                        onConfigChange({ ...config, cosine_similarity_query: checked as boolean })
+                                    }
+                                />
+                                <label className="text-sm" htmlFor="cosine-query">Cosine Similarity</label>
+                            </div>
                         </div>
                     </div>
 
@@ -179,6 +190,17 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                         <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+                            <div className="flex items-center gap-2 col-span-2">
+                                <Checkbox
+                                    className="cursor-pointer"
+                                    id="cosine-document"
+                                    checked={config.cosine_similarity_document ?? false}
+                                    onCheckedChange={(checked) =>
+                                        onConfigChange({ ...config, cosine_similarity_document: checked as boolean })
+                                    }
+                                />
+                                <label className="text-sm" htmlFor="cosine-document">Cosine Similarity</label>
                             </div>
                         </div>
                     </div>

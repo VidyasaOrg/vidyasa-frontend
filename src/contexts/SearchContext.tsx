@@ -1,16 +1,16 @@
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import type { QueryConfig } from '@/types/search';
+import type { QueryDocumentConfig } from '@/types/search';
 
 interface SearchContextType {
-    searchConfig: QueryConfig | null;
-    setSearchConfig: (config: QueryConfig) => void;
+    searchConfig: QueryDocumentConfig | null;
+    setSearchConfig: (config: QueryDocumentConfig) => void;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export function SearchProvider({ children }: { children: ReactNode }) {
-    const [searchConfig, setSearchConfig] = useState<QueryConfig | null>(null);
+    const [searchConfig, setSearchConfig] = useState<QueryDocumentConfig | null>(null);
 
     return (
         <SearchContext.Provider value={{ searchConfig, setSearchConfig }}>

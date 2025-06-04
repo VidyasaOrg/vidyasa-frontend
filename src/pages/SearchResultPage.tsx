@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import ContentLayout from '@/layouts/ContentLayout';
 import QueryWeights from '@/components/QueryWeights';
 import RankedDocuments from '@/components/RankedDocuments';
-import type { SingleQueryRequest, SingleQueryResponse, QueryConfig } from '@/types/search';
+import type { SingleQueryRequest, SingleQueryResponse, QueryDocumentConfig } from '@/types/search';
 import { useSearch } from '@/contexts/SearchContext';
 import InteractiveSearch from '@/components/InteractiveSearch';
 import { singleSearch } from '@/lib/api';
@@ -33,7 +33,7 @@ function SearchResultsPage() {
         if (!query) return;
         
         // Use the stored config if available, otherwise use defaults
-        const initialConfig: QueryConfig = searchConfig || {
+        const initialConfig: QueryDocumentConfig = searchConfig || {
             is_stemming: false,
             expansion_terms_count: 1,
             is_stop_words_removal: true,

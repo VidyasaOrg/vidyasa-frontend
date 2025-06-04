@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { MultiQueryRequest, QueryConfig } from '@/types/search';
+import type { MultiQueryRequest, QueryDocumentConfig } from '@/types/search';
 import { UploadIcon } from 'lucide-react';
 import { useSearch } from '@/contexts/SearchContext';
 import { cn } from "@/lib/utils";
@@ -9,14 +9,14 @@ import SearchConfig from './SearchConfig';
 
 interface BatchUploadProps {
     onUpload: (request: MultiQueryRequest) => void;
-    defaultConfig?: QueryConfig;
+    defaultConfig?: QueryDocumentConfig;
 }
 
 export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProps) {
     const { setSearchConfig } = useSearch();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
+    const [config, setConfig] = useState<QueryDocumentConfig>(defaultConfig || {
         is_stemming: false,
         expansion_terms_count: 1,
         is_stop_words_removal: true,
@@ -26,7 +26,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
         document_term_weighting_method: "tf_idf",
     });
 
-    const updateConfig = (newConfig: QueryConfig) => {
+    const updateConfig = (newConfig: QueryDocumentConfig) => {
         setConfig(newConfig);
         setSearchConfig(newConfig);
     };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { SingleQueryRequest, QueryConfig } from '@/types/search';
+import type { SingleQueryRequest, QueryDocumentConfig } from '@/types/search';
 import { SearchIcon } from 'lucide-react';
 import { z } from 'zod';
 import { useSearch } from '@/contexts/SearchContext';
@@ -12,13 +12,13 @@ const querySchema = z.string().min(1);
 interface InteractiveSearchProps {
     onSearch: (request: SingleQueryRequest) => void;
     defaultQuery?: string;
-    defaultConfig?: QueryConfig;
+    defaultConfig?: QueryDocumentConfig;
 }
 
 export default function InteractiveSearch({ onSearch, defaultQuery = '', defaultConfig }: InteractiveSearchProps) {
     const { setSearchConfig } = useSearch();
     const [query, setQuery] = useState(defaultQuery);
-    const [config, setConfig] = useState<QueryConfig>(defaultConfig || {
+    const [config, setConfig] = useState<QueryDocumentConfig>(defaultConfig || {
         is_stemming: false,
         expansion_terms_count: 1,
         is_stop_words_removal: true,
@@ -28,7 +28,7 @@ export default function InteractiveSearch({ onSearch, defaultQuery = '', default
         document_term_weighting_method: "tf_idf",
     });
 
-    const updateConfig = (newConfig: QueryConfig) => {
+    const updateConfig = (newConfig: QueryDocumentConfig) => {
         setConfig(newConfig);
         setSearchConfig(newConfig);
     };
