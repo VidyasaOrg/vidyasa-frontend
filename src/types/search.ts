@@ -24,15 +24,15 @@ export interface QueryDocumentConfig {
     cosine_normalization_document: boolean;
 }
 
-export interface SingleQueryRequest {
+export type SingleQueryRequest = {
     query: string;
-    config: QueryDocumentConfig;
-}
+    is_queries_from_cisi: boolean;
+} & QueryDocumentConfig;
 
-export interface MultiQueryRequest {
+export type MultiQueryRequest = {
     query: File;
-    config: QueryDocumentConfig;
-}
+    is_queries_from_cisi: boolean;
+} & QueryDocumentConfig;
 
 export interface RankedDocument {
     doc_id: number;

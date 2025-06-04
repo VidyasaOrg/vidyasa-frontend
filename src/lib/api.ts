@@ -44,11 +44,15 @@ export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQ
             },
             body: JSON.stringify({
                 query: request.query,
-                is_stemming: request.config.is_stemming,
-                is_stop_words_removal: request.config.is_stop_words_removal,
-                term_frequency_method: request.config.term_frequency_method,
-                term_weighting_method: request.config.term_weighting_method,
-                expansion_terms_count: request.config.expansion_terms_count,
+                is_stemming: request.is_stemming,
+                is_stop_words_removal: request.is_stop_words_removal,
+                query_term_frequency_method: request.query_term_frequency_method,
+                query_term_weighting_method: request.query_term_weighting_method,
+                document_term_frequency_method: request.document_term_frequency_method,
+                document_term_weighting_method: request.document_term_weighting_method,
+                cosine_normalization_query: request.cosine_normalization_query,
+                cosine_normalization_document: request.cosine_normalization_document,
+                expansion_terms_count: request.expansion_terms_count,
                 is_queries_from_cisi: false
             }),
         });
@@ -69,12 +73,16 @@ export const batchSearch = async (request: MultiQueryRequest): Promise<{ status:
     try {
         const formData = new FormData();
         formData.append('file', request.query);
-        formData.append('is_stemming', request.config.is_stemming.toString());
-        formData.append('is_stop_words_removal', request.config.is_stop_words_removal.toString());
-        formData.append('term_frequency_method', request.config.term_frequency_method);
-        formData.append('term_weighting_method', request.config.term_weighting_method);
-        formData.append('expansion_terms_count', request.config.expansion_terms_count.toString());
-        formData.append('is_queries_from_cisi', 'true');
+        formData.append('is_stemming', request.is_stemming.toString());
+        formData.append('is_stop_words_removal', request.is_stop_words_removal.toString());
+        formData.append('query_term_frequency_method', request.query_term_frequency_method);
+        formData.append('query_term_weighting_method', request.query_term_weighting_method);
+        formData.append('document_term_frequency_method', request.document_term_frequency_method);
+        formData.append('document_term_weighting_method', request.document_term_weighting_method);
+        formData.append('cosine_normalization_query', request.cosine_normalization_query.toString());
+        formData.append('cosine_normalization_document', request.cosine_normalization_document.toString());
+        formData.append('expansion_terms_count', request.expansion_terms_count.toString());
+        formData.append('is_queries_from_cisi', 'false');
 
         const response = await fetch('http://localhost:8000/query_batch/', {
             method: 'POST',

@@ -41,10 +41,12 @@ export default function InteractiveSearch({ onSearch, defaultQuery = '', default
         if (!result.success) {
             return;
         }
-        const request: SingleQueryRequest = {
+        const request = {
             query: query.trim(),
-            config: config
+            ...config,
+            is_queries_from_cisi: false
         };
+        console.log("Sending to backend:", request);
         onSearch(request);
     };
 

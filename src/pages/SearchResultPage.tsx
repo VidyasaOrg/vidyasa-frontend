@@ -47,7 +47,8 @@ function SearchResultsPage() {
         
         handleSearch({
             query,
-            config: initialConfig
+            ...initialConfig,
+            is_queries_from_cisi: false
         });
     }, [query]);
 

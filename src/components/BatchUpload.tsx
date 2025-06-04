@@ -88,8 +88,10 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
 
         const request: MultiQueryRequest = {
             query: selectedFile,
-            config: config
+            ...config,
+            is_queries_from_cisi: false
         };
+        console.log("Sending to backend:", request);
         onUpload(request);
     };
 
