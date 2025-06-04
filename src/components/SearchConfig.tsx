@@ -97,7 +97,6 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                         <SelectItem value="tf">TF</SelectItem>
                                         <SelectItem value="idf">IDF</SelectItem>
                                         <SelectItem value="tf_idf">TF-IDF</SelectItem>
-                                        <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -187,7 +186,6 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                         <SelectItem value="tf">TF</SelectItem>
                                         <SelectItem value="idf">IDF</SelectItem>
                                         <SelectItem value="tf_idf">TF-IDF</SelectItem>
-                                        <SelectItem value="tf_idf_norm">TF-IDF-Norm</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

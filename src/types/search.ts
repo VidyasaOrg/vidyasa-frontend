@@ -10,7 +10,7 @@ export interface TermLocations {
 
 export type TFMethod = 'raw' | 'log' | 'binary' | 'augmented';
 export type AdditionalTerms = number | 'all';
-export type TermWeightingMethod = 'tf' | 'idf' | 'tf_idf' | 'tf_idf_norm';
+export type TermWeightingMethod = 'tf' | 'idf' | 'tf_idf';
 
 export interface QueryDocumentConfig {
     is_stemming: boolean;
