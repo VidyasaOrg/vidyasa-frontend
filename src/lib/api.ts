@@ -6,27 +6,13 @@ export async function termSearch(term: string) {
     const data = await res.json();
 
     if (res.status === 200) {
-        const documents = Object.entries(data.term_postings || {}).map(
-            ([doc_id, positions]) => {
-                const posArr = Array.isArray(positions) ? positions as number[] : [];
-                return {
-                    doc_id: Number(doc_id),
-                    raw_tf: posArr.length,
-                    tf: posArr.length, 
-                    weight: 1,
-                    positions: posArr,
-                    document_preview: "", 
-                    idf: 1, 
-                };
-            }
-        );
         return {
             status: 200,
             data: {
-                term: data.term || term,
-                document_frequency: documents.length,
-                total_occurrences: documents.reduce((sum, d) => sum + d.raw_tf, 0),
-                documents,
+                term: data.term,
+                total_occurrences: data.total_occurrences,
+                total_documents: data.total_documents,
+                docs: data.docs
             },
         };
     }

@@ -108,20 +108,23 @@ function InverseDocTermPage() {
                                 <div className="flex flex-col gap-6">
                                     <div className="flex gap-4">
                                         <div className="px-4 py-2 bg-primary/10 rounded-md">
-                                            <span className="font-semibold">Jumlah Dokumen:</span> {searchState.data.document_frequency}
+                                            <span className="font-semibold">Jumlah Dokumen:</span> {searchState.data.total_documents}
                                         </div>
                                         <div className="px-4 py-2 bg-primary/10 rounded-md">
                                             <span className="font-semibold">Total Kemunculan:</span> {searchState.data.total_occurrences}
                                         </div>
                                     </div>
                                     <div className="grid gap-4">
-                                        {searchState.data.documents.map((doc) => (
+                                        {searchState.data.docs.map((doc) => (
                                             <div 
                                                 key={doc.doc_id}
                                                 className="p-4 bg-card rounded-lg border shadow-sm"
                                             >
                                                 <div className="flex justify-between items-start mb-2">
                                                     <div className="font-semibold">Dokumen {doc.doc_id}</div>
+                                                    <div className="text-sm text-muted-foreground">
+                                                        Bobot: {doc.weight.toFixed(4)}
+                                                    </div>
                                                 </div>
                                                 <p className="text-sm text-muted-foreground whitespace-pre-line">
                                                     {doc.document_preview}

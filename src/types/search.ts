@@ -66,19 +66,15 @@ export interface APIError {
 
 export interface TermDocument {
     doc_id: number;
-    raw_tf: number;
-    tf: number;
-    weight: number;
-    positions: number[];
     document_preview: string;
-    idf: number;
+    weight: number;
 }
 
 export interface TermInfo {
     term: string;
-    document_frequency: number;
     total_occurrences: number;
-    documents: TermDocument[];
+    total_documents: number;
+    docs: TermDocument[];
 }
 
 export interface DocumentTerm {
