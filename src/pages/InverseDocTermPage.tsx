@@ -114,6 +114,9 @@ function InverseDocTermPage() {
                                             <span className="font-semibold">Total Kemunculan:</span> {searchState.data.total_occurrences}
                                         </div>
                                     </div>
+                                    <div className="text-sm text-muted-foreground">
+                                        Bobot yang digunakan adalah Raw-TF * IDF
+                                    </div>
                                     <div className="grid gap-4">
                                         {searchState.data.docs.map((doc) => (
                                             <div 
