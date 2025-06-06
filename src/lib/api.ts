@@ -37,28 +37,26 @@ export async function docIdSearch(docId: string) {
     const res = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.documentInfo(docId)}`);
     const data = await res.json();
 
-    // Transform backend response to DocumentInfo
     if (res.status === 200) {
-        // Example transformation, adjust as needed
         const terms: DocumentInfo["terms"] = Object.entries(data.term_postings || {}).map(
-            ([term, positions]) => {
-                const posArr = Array.isArray(positions) ? positions as number[] : [];
+            ([term, info]) => {
+                const { positions, weight } = (info as { positions: number[], weight: number });
                 return {
                     term,
-                    raw_tf: posArr.length,
-                    weight: 1, // or calculate if available
-                    positions: posArr,
+                    raw_tf: positions.length,
+                    weight,
+                    positions,
                 };
             }
         );
         return {
             status: 200,
             data: {
-                length: terms.reduce((sum, t) => sum + t.raw_tf, 0),
-                unique_terms: terms.length,
-                content: "", // fill if available from backend
+                length: data.document_length,
+                unique_terms: data.unique_terms,
+                content: data.document_preview || "",
                 terms,
-                total_terms: terms.reduce((sum, t) => sum + t.raw_tf, 0),
+                total_terms: data.document_length
             },
         };
     }

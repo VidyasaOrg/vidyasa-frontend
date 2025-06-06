@@ -105,15 +105,12 @@ function InverseDocIdPage() {
                             <h2 className="text-xl font-bold">Hasil Pencarian</h2>
                             {searchState.status === 'success' && searchState.data && (
                                 <div className="flex flex-col gap-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="px-4 py-2 bg-primary/10 rounded-md">
                                             <span className="font-semibold">Panjang Dokumen:</span> {searchState.data.length}
                                         </div>
                                         <div className="px-4 py-2 bg-primary/10 rounded-md">
                                             <span className="font-semibold">Term Unik:</span> {searchState.data.unique_terms}
-                                        </div>
-                                        <div className="px-4 py-2 bg-primary/10 rounded-md">
-                                            <span className="font-semibold">Total Term:</span> {searchState.data.total_terms}
                                         </div>
                                     </div>
                                     
@@ -124,7 +121,12 @@ function InverseDocIdPage() {
                                         </p>
                                     </div>
                                     <div className="flex flex-col gap-4">
-                                        <h3 className="font-semibold">Term dalam Dokumen:</h3>
+                                        <div className="flex flex-col gap-1">
+                                            <h3 className="font-semibold">Term dalam Dokumen:</h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Bobot yang digunakan adalah Raw-TF * IDF
+                                            </p>
+                                        </div>
                                         <div className="grid gap-3">
                                             {Array.isArray(searchState.data.terms) && searchState.data.terms.length > 0 ? (
                                                 searchState.data.terms
@@ -132,9 +134,9 @@ function InverseDocIdPage() {
                                                     .map((term) => (
                                                         <div 
                                                             key={term.term}
-                                                            className="p-3 bg-card rounded-lg border shadow-sm flex justify-between items-center"
+                                                            className="p-3 bg-card rounded-lg border shadow-sm flex justify-between items-start"
                                                         >
-                                                            <div className="flex flex-col gap-2 flex-1">
+                                                            <div className="flex flex-col gap-2">
                                                                 <div className="flex gap-4 items-center">
                                                                     <span className="font-medium">{term.term}</span>
                                                                     <span className="text-sm text-muted-foreground">
@@ -145,8 +147,11 @@ function InverseDocIdPage() {
                                                                     Posisi: {term.positions.join(", ")}
                                                                 </div>
                                                             </div>
+                                                            <div className="text-sm text-muted-foreground">
+                                                                Bobot: {term.weight.toFixed(4)}
+                                                            </div>
                                                         </div>
-                                                ))
+                                                    ))
                                             ) : (
                                                 <div className="text-muted-foreground text-sm">
                                                     Tidak ada data term untuk dokumen ini.
