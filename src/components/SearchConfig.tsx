@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -19,9 +18,6 @@ interface Props {
 
 export default function SearchConfig({ config, onConfigChange }: Props) {
     const [showAdvanced, setShowAdvanced] = useState(false);
-    const [customTerms, setCustomTerms] = useState<number>(() => {
-        return typeof config.expansion_terms_count === "number" ? config.expansion_terms_count : 1;
-    });
 
     return (
         <div className="space-y-2">
@@ -110,42 +106,6 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                                     }
                                 />
                                 <label className="text-sm" htmlFor="cosine-query">Cosine Normalization</label>
-                            </div>
-                            <div className="flex flex-col gap-2 col-span-2">
-                                <label htmlFor="additional-terms" className="text-sm">Term Tambahan</label>
-                                <div className="flex gap-2">
-                                    <Select
-                                        value={config.expansion_terms_count === "all" ? "all" : "custom"}
-                                        onValueChange={(value) => {
-                                            if (value === "all") {
-                                                onConfigChange({ ...config, expansion_terms_count: "all" });
-                                            } else {
-                                                onConfigChange({ ...config, expansion_terms_count: customTerms });
-                                            }
-                                        }}
-                                    >
-                                        <SelectTrigger className="cursor-pointer">
-                                            <SelectValue placeholder="Pilih jumlah term" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">Semua Term</SelectItem>
-                                            <SelectItem value="custom">Kustom</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    {config.expansion_terms_count !== "all" && (
-                                        <Input
-                                            type="number"
-                                            min={1}
-                                            value={customTerms}
-                                            onChange={(e) => {
-                                                const value = parseInt(e.target.value);
-                                                setCustomTerms(value);
-                                                onConfigChange({ ...config, expansion_terms_count: value });
-                                            }}
-                                            className="w-24"
-                                        />
-                                    )}
-                                </div>
                             </div>
                         </div>
                     </div>
