@@ -22,6 +22,7 @@ export interface QueryDocumentConfig {
     document_term_weighting_method: TermWeightingMethod;
     cosine_normalization_query: boolean; 
     cosine_normalization_document: boolean;
+    query_expansion_type?: "prompt" | "no_prompt";
 }
 
 export type SingleQueryRequest = {

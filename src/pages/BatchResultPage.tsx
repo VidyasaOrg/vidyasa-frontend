@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router';
 import ContentLayout from '@/layouts/ContentLayout';
 import { Button } from '@/components/ui/button';
 import { DownloadIcon, AlertCircle } from 'lucide-react';
@@ -18,8 +18,9 @@ import type { SingleQueryResponse } from '@/types/search';
 
 export default function BatchResultPage() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { 
-        request, 
+        request: contextRequest, 
         response, 
         error, 
         isProcessing,
@@ -29,18 +30,81 @@ export default function BatchResultPage() {
         setRequest 
     } = useBatch();
 
+    // Get request from navigation state or context
+    const request = useMemo(() => {
+        if (location.state?.request) {
+            // If we have a request in navigation state, update the context
+            setRequest(location.state.request);
+            setIsProcessing(true);
+            return location.state.request;
+        }
+        return contextRequest;
+    }, [location.state, contextRequest, setRequest, setIsProcessing]);
+
     const [selectedQueryIndex, setSelectedQueryIndex] = useState<number>(0);
+
+    // Memoize the selected result to prevent unnecessary recalculations
+    const selectedResult = useMemo(() => 
+        response?.results ? response.results[selectedQueryIndex] : undefined,
+        [response?.results, selectedQueryIndex]
+    );
+
+    // Memoize the MAP calculations
+    const mapScores = useMemo(() => {
+        if (!response?.results) return null;
+        
+        return {
+            original: (response.results.reduce((sum, result) => sum + result.original_map_score, 0) / response.results.length).toFixed(3),
+            expanded: (response.results.reduce((sum, result) => sum + result.expanded_map_score, 0) / response.results.length).toFixed(3)
+        };
+    }, [response?.results]);
+
+    const handleDownload = useCallback(() => {
+        if (!response?.results) return;
+        
+        const blob = new Blob([JSON.stringify(response.results, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'search-results.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, [response?.results]);
+
+    const handleBack = useCallback(() => {
+        setRequest(null);
+        setResponse(null);
+        setError(null);
+        setIsProcessing(false);
+        navigate('/');
+    }, [navigate, setRequest, setResponse, setError, setIsProcessing]);
 
     useEffect(() => {
         if (!request || !isProcessing) return;
 
+        console.log('Effect triggered with:', {
+            requestId: request.query.name,
+            isProcessing,
+            timestamp: new Date().toISOString()
+        });
+
         const processRequest = async () => {
             try {
+                console.log('Starting batch search request');
                 const result = await batchSearch(request);
+                console.log('Batch search completed:', result.status);
                 
                 switch (result.status) {
                     case 200:
-                        setResponse(result.data!);
+                        if (result.data) {
+                            console.log('Setting batch response:', {
+                                resultCount: result.data.results.length,
+                                timestamp: new Date().toISOString()
+                            });
+                            setResponse(result.data);
+                        }
                         break;
                     case 400:
                         setError({ 
@@ -51,55 +115,48 @@ export default function BatchResultPage() {
                     case 500:
                         setError({ 
                             status: 500, 
-                            message: "Server Error" 
+                            message: "Terjadi kesalahan pada server. Silakan coba lagi nanti." 
                         });
                         break;
                     default:
                         setError({ 
                             status: 500, 
-                            message: "Unexpected error" 
+                            message: "Terjadi kesalahan pada server. Silakan coba lagi nanti." 
                         });
                 }
             } catch (error) {
                 console.error('Error processing request:', error);
                 setError({ 
                     status: 500, 
-                    message: "Unexpected error" 
+                    message: "Terjadi kesalahan pada server. Silakan coba lagi nanti." 
                 });
             } finally {
+                console.log('Setting isProcessing to false');
                 setIsProcessing(false);
             }
         };
 
-        processRequest();
-    }, [request, isProcessing]);
+        let isSubscribed = true;
+        if (isSubscribed) {
+            processRequest();
+        }
 
-    const handleDownload = () => {
-        if (!response?.results) return;
-        
-        // Create a download link for the file
-        const blob = new Blob([JSON.stringify(response.results, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'search-results.json';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
+        return () => {
+            isSubscribed = false;
+            console.log('Effect cleanup - cancelling any pending operations');
+        };
+    }, [request, isProcessing, setResponse, setError, setIsProcessing]);
 
-    const handleBack = () => {
-        // Reset state when going back
-        setRequest(null);
-        setResponse(null);
-        setError(null);
-        setIsProcessing(false);
-        navigate('/');
-    };
-
-    const selectedResult: SingleQueryResponse | undefined = 
-        response?.results ? response.results[selectedQueryIndex] : undefined;
+    // Add logging to track changes
+    useEffect(() => {
+        if (selectedResult) {
+            console.log('Selected result changed:', {
+                originalQuery: selectedResult.original_query,
+                expandedQuery: selectedResult.expanded_query,
+                selectedIndex: selectedQueryIndex
+            });
+        }
+    }, [selectedResult, selectedQueryIndex]);
 
     return (
         <ContentLayout>
@@ -134,6 +191,22 @@ export default function BatchResultPage() {
                         </div>
                     ) : response?.results ? (
                         <div className="space-y-8">
+                            <div className="p-4 border rounded-lg space-y-4">
+                                <h3 className="text-lg font-semibold">Mean Average Precision (MAP)</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="text-sm text-muted-foreground">MAP Awal</div>
+                                        <div className="font-medium">{mapScores?.original}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">Mean dari AP seluruh query</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-sm text-muted-foreground">MAP Ekspansi</div>
+                                        <div className="font-medium">{mapScores?.expanded}</div>
+                                        <div className="text-xs text-muted-foreground mt-1">Mean dari AP seluruh query</div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex justify-between items-center gap-4">
                                 <Button
                                     onClick={handleDownload}
@@ -179,6 +252,7 @@ export default function BatchResultPage() {
                                         expandedRanking={selectedResult.expanded_ranking}
                                         originalMapScore={selectedResult.original_map_score}
                                         expandedMapScore={selectedResult.expanded_map_score}
+                                        scoreLabel="Average Precision"
                                     />
 
                                     <QueryWeights 

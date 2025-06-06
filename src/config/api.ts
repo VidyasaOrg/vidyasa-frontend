@@ -3,6 +3,9 @@ export const API_CONFIG = {
     endpoints: {
         termInfo: (term: string) => `/inverted_file/term/${encodeURIComponent(term)}`,
         documentInfo: (docId: string) => `/inverted_file/document/${encodeURIComponent(docId)}`,
-        query: '/query'
+        query: '/query',
+        queryExp: '/query/exp',
+        queryBatch: '/query_batch',
+        queryBatchExp: '/query_batch/exp'
     }
 } as const; 

@@ -18,7 +18,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
     const [isDragging, setIsDragging] = useState(false);
     const [config, setConfig] = useState<QueryDocumentConfig>(defaultConfig || {
         is_stemming: false,
-        expansion_terms_count: 1,
+        expansion_terms_count: "all",
         is_stop_words_removal: true,
         query_term_frequency_method: "raw",
         query_term_weighting_method: "tf_idf",
@@ -26,6 +26,7 @@ export default function BatchUpload({ onUpload, defaultConfig }: BatchUploadProp
         document_term_weighting_method: "tf_idf",
         cosine_normalization_query: false,
         cosine_normalization_document: false,
+        query_expansion_type: "no_prompt"
     });
 
     const updateConfig = (newConfig: QueryDocumentConfig) => {

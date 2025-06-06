@@ -12,51 +12,32 @@ export default function QueryWeights({ originalWeights, expandedWeights }: Query
         ...Object.keys(expandedWeights)
     ])).sort();
 
-    // Find the maximum weight for scaling the bars
-    const maxWeight = Math.max(
-        ...Object.values(originalWeights),
-        ...Object.values(expandedWeights)
-    );
-
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold">Perbandingan Bobot Term</h3>
-            <div className="space-y-2">
-                {allTerms.map(term => (
-                    <div key={term} className="space-y-1">
-                        <div className="text-sm font-medium">{term}</div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <div className="text-xs text-muted-foreground">Query Awal</div>
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 bg-primary/20 rounded-full" 
-                                        style={{ 
-                                            width: `${((originalWeights[term] || 0) / maxWeight) * 100}%`,
-                                            transition: 'width 0.3s ease-in-out'
-                                        }} 
-                                    />
-                                    <span className="text-sm tabular-nums">
-                                        {(originalWeights[term] || 0).toFixed(3)}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="space-y-1">
-                                <div className="text-xs text-muted-foreground">Query Ekspansi</div>
-                                <div className="flex items-center gap-2">
-                                    <div className="h-4 bg-primary/60 rounded-full" 
-                                        style={{ 
-                                            width: `${((expandedWeights[term] || 0) / maxWeight) * 100}%`,
-                                            transition: 'width 0.3s ease-in-out'
-                                        }} 
-                                    />
-                                    <span className="text-sm tabular-nums">
-                                        {(expandedWeights[term] || 0).toFixed(3)}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+            <div className="border rounded-lg">
+                <table className="w-full">
+                    <thead>
+                        <tr className="border-b">
+                            <th className="text-left p-3">Term</th>
+                            <th className="text-right p-3">Bobot Awal</th>
+                            <th className="text-right p-3">Bobot Ekspansi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {allTerms.map((term, index) => (
+                            <tr key={term} className={index !== allTerms.length - 1 ? "border-b" : ""}>
+                                <td className="p-3 font-medium">{term}</td>
+                                <td className="p-3 text-right tabular-nums">
+                                    {(originalWeights[term] || 0).toFixed(3)}
+                                </td>
+                                <td className="p-3 text-right tabular-nums">
+                                    {(expandedWeights[term] || 0).toFixed(3)}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

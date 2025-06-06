@@ -14,11 +14,21 @@ interface RankedDocumentsProps {
     expandedRanking: RankedDocument[];
     originalMapScore?: number;
     expandedMapScore?: number;
+    scoreLabel?: string;
 }
 
 function DocumentList({ documents }: { documents: RankedDocument[] }) {
     const [currentPage, setCurrentPage] = useState(1);
     const documentsPerPage = 10;
+    
+    if (documents.length === 0) {
+        return (
+            <div className="p-4 text-center text-muted-foreground">
+                Tidak ada dokumen relevan yang ditemukan
+            </div>
+        );
+    }
+    
     const maxScore = Math.max(...documents.map(doc => doc.similarity_score));
     
     // Calculate pagination
@@ -89,7 +99,8 @@ export default function RankedDocuments({
     originalRanking,
     expandedRanking,
     originalMapScore,
-    expandedMapScore
+    expandedMapScore,
+    scoreLabel = "MAP"
 }: RankedDocumentsProps) {
 
     return (
@@ -99,10 +110,10 @@ export default function RankedDocuments({
                 {originalMapScore && expandedMapScore && (
                     <div className="flex gap-8">
                         <div className="text-sm">
-                            MAP Awal: <span className="font-medium">{originalMapScore.toFixed(3)}</span>
+                            {scoreLabel} Awal: <span className="font-medium">{originalMapScore.toFixed(3)}</span>
                         </div>
                         <div className="text-sm">
-                            MAP Ekspansi: <span className="font-medium">{expandedMapScore.toFixed(3)}</span>
+                            {scoreLabel} Ekspansi: <span className="font-medium">{expandedMapScore.toFixed(3)}</span>
                         </div>
                     </div>
                 )}

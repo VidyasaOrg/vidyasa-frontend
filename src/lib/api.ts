@@ -51,7 +51,11 @@ export async function docIdSearch(docId: string) {
 
 export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQueryResponse> => {
     try {
-        const response = await fetch(`${API_CONFIG.baseUrl}${API_CONFIG.endpoints.query}`, {
+        const endpoint = request.query_expansion_type === "prompt" 
+            ? API_CONFIG.endpoints.query 
+            : API_CONFIG.endpoints.queryExp;
+
+        const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -85,6 +89,10 @@ export const singleSearch = async (request: SingleQueryRequest): Promise<SingleQ
 
 export const batchSearch = async (request: MultiQueryRequest): Promise<{ status: number; data?: MultiQueryResponse }> => {
     try {
+        const endpoint = request.query_expansion_type === "prompt" 
+            ? API_CONFIG.endpoints.queryBatch 
+            : API_CONFIG.endpoints.queryBatchExp;
+
         const formData = new FormData();
         formData.append('file', request.query);
         formData.append('is_stemming', request.is_stemming.toString());
@@ -96,9 +104,9 @@ export const batchSearch = async (request: MultiQueryRequest): Promise<{ status:
         formData.append('cosine_normalization_query', request.cosine_normalization_query.toString());
         formData.append('cosine_normalization_document', request.cosine_normalization_document.toString());
         formData.append('expansion_terms_count', request.expansion_terms_count.toString());
-        formData.append('is_queries_from_cisi', 'false');
+        formData.append('is_queries_from_cisi', 'true');
 
-        const response = await fetch('http://localhost:8000/query_batch/', {
+        const response = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
             method: 'POST',
             body: formData,
         });

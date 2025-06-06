@@ -1,58 +1,83 @@
-import { useSearchParams, Navigate, Link } from 'react-router';
+import { Navigate, Link, useLocation } from 'react-router';
 import { useEffect, useState } from 'react';
 import ContentLayout from '@/layouts/ContentLayout';
 import QueryWeights from '@/components/QueryWeights';
 import RankedDocuments from '@/components/RankedDocuments';
-import type { SingleQueryRequest, SingleQueryResponse, QueryDocumentConfig } from '@/types/search';
+import type { SingleQueryRequest, SingleQueryResponse } from '@/types/search';
 import { useSearch } from '@/contexts/SearchContext';
 import InteractiveSearch from '@/components/InteractiveSearch';
 import { singleSearch } from '@/lib/api';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 function SearchResultsPage() {
-    const [params] = useSearchParams();
-    const query = params.get('query') ?? '';
+    const location = useLocation();
+    const { searchConfig } = useSearch();
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState<SingleQueryResponse | null>(null);
-    const { searchConfig } = useSearch();
+    const [error, setError] = useState<{ status: number; message: string } | null>(null);
+    const [currentRequest, setCurrentRequest] = useState<SingleQueryRequest | null>(
+        location.state?.request || null
+    );
 
     const handleSearch = async (request: SingleQueryRequest) => {
         setLoading(true);
+        setError(null);
+        setCurrentRequest(request);
         try {
+            console.log('Starting search with request:', request);
             const response = await singleSearch(request);
+            console.log('Search completed, setting results');
             setResults(response);
         } catch (error) {
             console.error('Search failed:', error);
-            // Handle error state
+            setError({
+                status: 500,
+                message: "Terjadi kesalahan pada server. Silakan coba lagi nanti."
+            });
         } finally {
             setLoading(false);
         }
     };
 
-    // Only perform initial search when the page loads
+    // Only perform initial search once when component mounts
     useEffect(() => {
-        if (!query) return;
-        
-        // Use the stored config if available, otherwise use defaults
-        const initialConfig: QueryDocumentConfig = searchConfig || {
-            is_stemming: false,
-            expansion_terms_count: 1,
-            is_stop_words_removal: true,
-            query_term_frequency_method: "raw",
-            query_term_weighting_method: "tf_idf",
-            document_term_frequency_method: "raw",
-            document_term_weighting_method: "tf_idf",
-            cosine_normalization_query: false,
-            cosine_normalization_document: false,
-        };
-        
-        handleSearch({
-            query,
-            ...initialConfig,
-            is_queries_from_cisi: false
-        });
-    }, [query]);
+        let isSubscribed = true;
 
-    if (!query) return <Navigate to="/" />;
+        const performInitialSearch = async () => {
+            if (currentRequest && !results && !loading) {
+                console.log('Performing initial search');
+                try {
+                    setLoading(true);
+                    const response = await singleSearch(currentRequest);
+                    if (isSubscribed) {
+                        console.log('Setting initial results');
+                        setResults(response);
+                    }
+                } catch (error) {
+                    console.error('Initial search failed:', error);
+                    if (isSubscribed) {
+                        setError({
+                            status: 500,
+                            message: "Terjadi kesalahan pada server. Silakan coba lagi nanti."
+                        });
+                    }
+                } finally {
+                    if (isSubscribed) {
+                        setLoading(false);
+                    }
+                }
+            }
+        };
+
+        performInitialSearch();
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, []); // Empty dependency array since we only want this to run once on mount
+
+    if (!currentRequest) return <Navigate to="/" />;
 
     return (
         <ContentLayout>
@@ -63,7 +88,7 @@ function SearchResultsPage() {
 
                 <div className="w-full space-y-8">
                     <InteractiveSearch 
-                        defaultQuery={query}
+                        defaultQuery={currentRequest.query}
                         defaultConfig={searchConfig || undefined}
                         onSearch={handleSearch}
                     />
@@ -75,7 +100,23 @@ function SearchResultsPage() {
                         </div>
                     )}
 
-                    {results && !loading && (
+                    {error && (
+                        <div className="p-6 border rounded-lg space-y-4">
+                            <div className="flex items-center gap-2 text-destructive">
+                                <AlertCircle className="w-5 h-5" />
+                                <h2 className="text-lg font-semibold">Error</h2>
+                            </div>
+                            <p className="text-muted-foreground">{error.message}</p>
+                            <Button
+                                variant="outline"
+                                onClick={() => setError(null)}
+                            >
+                                Coba Lagi
+                            </Button>
+                        </div>
+                    )}
+
+                    {results && !loading && !error && (
                         <div className="space-y-8">
                             <div className="p-4 border rounded-lg space-y-2">
                                 <div className="grid grid-cols-2 gap-4">
@@ -93,6 +134,7 @@ function SearchResultsPage() {
                             <RankedDocuments 
                                 originalRanking={results.original_ranking}
                                 expandedRanking={results.expanded_ranking}
+                                scoreLabel="Average Precision"
                             />
 
                             <QueryWeights 

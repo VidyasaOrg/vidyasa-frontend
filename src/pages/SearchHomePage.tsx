@@ -6,23 +6,21 @@ import ContentLayout from "@/layouts/ContentLayout";
 import BatchUpload from "@/components/BatchUpload";
 import type { SingleQueryRequest, MultiQueryRequest } from "@/types/search";
 import { useSearch } from "@/contexts/SearchContext";
-import { useBatch } from "@/contexts/BatchContext";
 import InteractiveSearch from "@/components/InteractiveSearch";
 
 function SearchHomePage() {
     const [isInteractive, setIsInteractive] = useState(true);
     const navigate = useNavigate();
     const { searchConfig } = useSearch();
-    const { setRequest, setIsProcessing } = useBatch();
 
     const handleSearch = (request: SingleQueryRequest) => {
-        navigate(`/search?query=${encodeURIComponent(request.query)}`);
+        navigate('/search', { 
+            state: { request }
+        });
     };
 
     const handleBatchUpload = (request: MultiQueryRequest) => {
-        setRequest(request);
-        setIsProcessing(true);
-        navigate('/batch-result');
+        navigate('/batch-result', { state: { request } });
     };
 
     return (

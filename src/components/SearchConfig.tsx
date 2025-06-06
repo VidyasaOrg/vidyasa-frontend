@@ -62,6 +62,22 @@ export default function SearchConfig({ config, onConfigChange }: Props) {
                         <h3 className="font-semibold text-base">Query Weighting</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex flex-col gap-2">
+                                <label htmlFor="query-expansion-type" className="text-sm">Jenis Ekspansi Query</label>
+                                <Select
+                                    value={config.query_expansion_type ?? "no_prompt"}
+                                    onValueChange={(value: "prompt" | "no_prompt") =>
+                                        onConfigChange({ ...config, query_expansion_type: value })}
+                                >
+                                    <SelectTrigger className="cursor-pointer">
+                                        <SelectValue placeholder="Pilih jenis ekspansi" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="prompt">QE Prompt</SelectItem>
+                                        <SelectItem value="no_prompt">Explain Prompt</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="flex flex-col gap-2">
                                 <label htmlFor="query-tf" className="text-sm">Metode TF</label>
                                 <Select
                                     value={config.query_term_frequency_method}
